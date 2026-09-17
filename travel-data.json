@@ -610,15 +610,6 @@
           "note": "已预约，与 小张、小孙",
           "lat": 37.4849,
           "lng": -122.2281
-        },
-        {
-          "time": "晚上",
-          "title": "住小孙家",
-          "location": "旧金山",
-          "type": "accommodation",
-          "note": "",
-          "lat": 37.7749,
-          "lng": -122.4194
         }
       ]
     },
@@ -1022,6 +1013,84 @@
       "addedToPlan": false,
       "lat": 37.4447,
       "lng": -122.1607
+    },
+    {
+      "id": "h17",
+      "name": "华盛顿公园",
+      "description": "波特兰最大城市公园，里面还有玫瑰园、日本花园和动物园；备选未排期",
+      "address": "Washington Park, Portland, OR",
+      "source": "推荐",
+      "sourceUrl": "",
+      "bestTime": "白天",
+      "needBooking": false,
+      "addedToPlan": false,
+      "lat": 45.5155,
+      "lng": -122.7036
+    },
+    {
+      "id": "h18",
+      "name": "国际玫瑰试验园",
+      "description": "Washington Park 里的免费玫瑰园，5–10 月花开最盛；备选未排期",
+      "address": "International Rose Test Garden, Portland, OR",
+      "source": "推荐",
+      "sourceUrl": "",
+      "bestTime": "白天",
+      "needBooking": false,
+      "addedToPlan": false,
+      "lat": 45.5205,
+      "lng": -122.7045
+    },
+    {
+      "id": "h19",
+      "name": "波特兰日本花园",
+      "description": "Washington Park 内的经典日式庭院，需购票；备选未排期",
+      "address": "611 SW Kingston Ave, Portland, OR",
+      "source": "推荐",
+      "sourceUrl": "",
+      "bestTime": "白天",
+      "needBooking": true,
+      "addedToPlan": false,
+      "lat": 45.5204,
+      "lng": -122.706
+    },
+    {
+      "id": "h20",
+      "name": "鲍威尔书城",
+      "description": "Powell's City of Books，全球最大独立书店，可以逛很久；备选未排期",
+      "address": "1005 W Burnside St, Portland, OR",
+      "source": "推荐",
+      "sourceUrl": "",
+      "bestTime": "白天",
+      "needBooking": false,
+      "addedToPlan": false,
+      "lat": 45.5231,
+      "lng": -122.6816
+    },
+    {
+      "id": "h21",
+      "name": "先锋法院广场",
+      "description": "Pioneer Courthouse Square，波特兰市中心地标广场，活动集市常在这；备选未排期",
+      "address": "Pioneer Courthouse Square, Portland, OR",
+      "source": "推荐",
+      "sourceUrl": "",
+      "bestTime": "白天",
+      "needBooking": false,
+      "addedToPlan": false,
+      "lat": 45.5189,
+      "lng": -122.679
+    },
+    {
+      "id": "h22",
+      "name": "Multnomah 瀑布",
+      "description": "哥伦比亚河谷最出名的瀑布，距波特兰市区约 30 分钟车程，路边就能看；备选未排期",
+      "address": "Multnomah Falls, OR",
+      "source": "推荐",
+      "sourceUrl": "",
+      "bestTime": "白天",
+      "needBooking": false,
+      "addedToPlan": false,
+      "lat": 45.5761,
+      "lng": -122.1157
     }
   ],
   "reservations": [
