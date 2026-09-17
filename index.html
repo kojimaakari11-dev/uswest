@@ -266,10 +266,6 @@
   .rail-page { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; color: var(--text-light); }
 
   /* ---------- 准备清单 ---------- */
-  .cl-progress { font-size: 12px; color: var(--text-light); flex: 0 0 auto; }
-  .cl-progress b { color: var(--primary); font-size: 13px; }
-  .cl-bar { height: 6px; border-radius: 3px; background: var(--border); overflow: hidden; margin-bottom: 14px; }
-  .cl-bar i { display: block; height: 100%; width: 0; background: var(--primary); transition: width .3s; }
   .cl-add { display: flex; gap: 8px; margin-bottom: 14px; }
   .cl-add select, .cl-add input {
     border: 1px solid var(--border); border-radius: 10px; padding: 10px;
@@ -401,20 +397,20 @@
 
   <!-- 种草打卡地 -->
   <section class="section" id="hotspots-section">
-    <h2 class="section-title"><span class="icon">🌿</span> 种草的打卡地</h2>
+    <h2 class="section-title">备选打卡点</h2>
     <div class="hotspots-grid" id="hotspots-grid"></div>
   </section>
 
   <!-- 预订与购票 -->
   <section class="section" id="reservations-section">
-    <h2 class="section-title"><span class="icon">🎫</span> 预订与购票</h2>
+    <h2 class="section-title">预订与购票</h2>
     <div id="reservations-list"></div>
   </section>
 
   <!-- 航班行程 -->
   <section class="section" id="flights-section">
     <div class="section-head">
-      <h2 class="section-title"><span class="icon">✈️</span> 航班行程</h2>
+      <h2 class="section-title">航班行程</h2>
       <span class="rail-page" id="rail-page">01 / 04</span>
     </div>
     <div class="flight-rail" id="flight-rail"></div>
@@ -424,10 +420,8 @@
   <!-- 旅行准备 -->
   <section class="section" id="checklist-section">
     <div class="section-head">
-      <h2 class="section-title"><span class="icon">✅</span> 旅行准备</h2>
-      <span class="cl-progress" id="cl-progress">已完成 <b>0</b> / 0</span>
+      <h2 class="section-title">旅行准备</h2>
     </div>
-    <div class="cl-bar"><i id="cl-bar-fill"></i></div>
     <div class="cl-add">
       <select id="cl-cat"></select>
       <input id="cl-input" type="text" placeholder="添加新事项…" maxlength="40" />
@@ -1290,9 +1284,7 @@
   }
 
   function paintProgress() {
-    var s = checklistStats();
-    document.getElementById('cl-progress').innerHTML = '已完成 <b>' + s.done + '</b> / ' + s.total;
-    document.getElementById('cl-bar-fill').style.width = s.total ? (s.done / s.total * 100) + '%' : '0%';
+    // 进度数字已按需求移除，避免引用已删除的元素
   }
 
   function syncCategoryOptions() {
