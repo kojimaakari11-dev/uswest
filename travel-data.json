@@ -1,0 +1,596 @@
+{
+  "_comment": "旅行计划数据文件，修改后刷新网页即可生效。不要删除引号和逗号。",
+  "meta": {
+    "title": "美国西岸之旅",
+    "destination": "旧金山湾区 · 洛杉矶 · 波特兰",
+    "startDate": "2026-09-24T13:10:00+08:00",
+    "endDate": "2026-10-07T10:05:00+08:00",
+    "homeTimezone": "Asia/Shanghai",
+    "tripTimezone": "America/Los_Angeles"
+  },
+  "currentLocation": {
+    "_comment": "旅途中的当前位置，用于此刻模块。GPS获取失败时使用此处。",
+    "name": "上海",
+    "lat": 31.2304,
+    "lng": 121.4737
+  },
+  "flights": [
+    {
+      "id": "f1",
+      "type": "international",
+      "direction": "outbound",
+      "date": "2026-09-24",
+      "segments": [
+        {
+          "dep": { "code": "PVG", "city": "上海浦东", "terminal": "T2", "time": "2026-09-24T13:10:00+08:00" },
+          "arr": { "code": "ICN", "city": "首尔仁川", "terminal": "T2", "time": "2026-09-24T16:00:00+09:00" },
+          "flight": "OZ364",
+          "airline": "韩亚航空",
+          "duration": "1h50m",
+          "plane": "A330-300"
+        },
+        {
+          "dep": { "code": "ICN", "city": "首尔仁川", "terminal": "T2", "time": "2026-09-24T21:00:00+09:00" },
+          "arr": { "code": "SFO", "city": "旧金山", "terminal": "I", "time": "2026-09-24T15:30:00-07:00" },
+          "flight": "OZ212",
+          "airline": "韩亚航空",
+          "duration": "10h30m",
+          "plane": "A350"
+        }
+      ],
+      "transfer": {
+        "airport": "ICN",
+        "city": "首尔",
+        "duration": "5h0m",
+        "note": "无需重新托运行李，无需过境签"
+      }
+    },
+    {
+      "id": "f2",
+      "type": "domestic",
+      "direction": "roundtrip",
+      "date": "2026-09-25",
+      "segments": [
+        {
+          "dep": { "code": "SFO", "city": "旧金山", "terminal": "", "time": "2026-09-25T10:35:00-07:00" },
+          "arr": { "code": "BUR", "city": "伯班克", "terminal": "", "time": "2026-09-25T11:50:00-07:00" },
+          "flight": "WN3714",
+          "airline": "Southwest",
+          "duration": "1h15m",
+          "plane": ""
+        },
+        {
+          "dep": { "code": "BUR", "city": "伯班克", "terminal": "", "time": "2026-09-27T20:45:00-07:00" },
+          "arr": { "code": "SFO", "city": "旧金山", "terminal": "", "time": "2026-09-27T22:05:00-07:00" },
+          "flight": "WN2922",
+          "airline": "Southwest",
+          "duration": "1h20m",
+          "plane": ""
+        }
+      ],
+      "transfer": null
+    },
+    {
+      "id": "f3",
+      "type": "domestic",
+      "direction": "roundtrip",
+      "date": "2026-10-01",
+      "segments": [
+        {
+          "dep": { "code": "SJC", "city": "圣何塞", "terminal": "", "time": "2026-10-01T15:30:00-07:00" },
+          "arr": { "code": "PDX", "city": "波特兰", "terminal": "", "time": "2026-10-01T17:20:00-07:00" },
+          "flight": "3330",
+          "airline": "",
+          "duration": "1h50m",
+          "plane": "Boeing 737 MAX8"
+        },
+        {
+          "dep": { "code": "PDX", "city": "波特兰", "terminal": "", "time": "2026-10-03T17:50:00-07:00" },
+          "arr": { "code": "SJC", "city": "圣何塞", "terminal": "", "time": "2026-10-03T19:40:00-07:00" },
+          "flight": "3330",
+          "airline": "",
+          "duration": "1h50m",
+          "plane": "Boeing 737 MAX8"
+        }
+      ],
+      "transfer": null
+    },
+    {
+      "id": "f4",
+      "type": "international",
+      "direction": "return",
+      "date": "2026-10-05",
+      "segments": [
+        {
+          "dep": { "code": "SFO", "city": "旧金山", "terminal": "I", "time": "2026-10-05T23:20:00-07:00" },
+          "arr": { "code": "ICN", "city": "首尔仁川", "terminal": "T2", "time": "2026-10-07T04:25:00+09:00" },
+          "flight": "OZ211",
+          "airline": "韩亚航空",
+          "duration": "13h5m",
+          "plane": "A350"
+        },
+        {
+          "dep": { "code": "ICN", "city": "首尔仁川", "terminal": "T2", "time": "2026-10-07T09:00:00+09:00" },
+          "arr": { "code": "PVG", "city": "上海浦东", "terminal": "T2", "time": "2026-10-07T10:05:00+08:00" },
+          "flight": "OZ361",
+          "airline": "韩亚航空",
+          "duration": "2h5m",
+          "plane": "A330-300"
+        }
+      ],
+      "transfer": {
+        "airport": "ICN",
+        "city": "首尔",
+        "duration": "4h35m",
+        "note": "无需重新托运行李，无需过境签"
+      }
+    }
+  ],
+  "accommodations": [
+    {
+      "date": "2026-09-24",
+      "name": "小张家",
+      "type": "friend",
+      "city": "旧金山",
+      "address": "",
+      "checkIn": "",
+      "checkOut": ""
+    },
+    {
+      "date": "2026-09-25",
+      "name": "洛杉矶酒店（待补充）",
+      "type": "hotel",
+      "city": "洛杉矶",
+      "address": "",
+      "checkIn": "",
+      "checkOut": ""
+    },
+    {
+      "date": "2026-09-26",
+      "name": "洛杉矶酒店（待补充）",
+      "type": "hotel",
+      "city": "洛杉矶",
+      "address": "",
+      "checkIn": "",
+      "checkOut": ""
+    },
+    {
+      "date": "2026-09-27",
+      "name": "Graduate by Hilton Palo Alto",
+      "type": "hotel",
+      "city": "Palo Alto",
+      "address": "488 Main St, Palo Alto, CA 94301",
+      "checkIn": "16:00",
+      "checkOut": "9月30日 11:00"
+    },
+    {
+      "date": "2026-09-28",
+      "name": "Graduate by Hilton Palo Alto",
+      "type": "hotel",
+      "city": "Palo Alto",
+      "address": "488 Main St, Palo Alto, CA 94301",
+      "checkIn": "",
+      "checkOut": ""
+    },
+    {
+      "date": "2026-09-29",
+      "name": "Graduate by Hilton Palo Alto",
+      "type": "hotel",
+      "city": "Palo Alto",
+      "address": "488 Main St, Palo Alto, CA 94301",
+      "checkIn": "",
+      "checkOut": ""
+    },
+    {
+      "date": "2026-09-30",
+      "name": "小孙家",
+      "type": "friend",
+      "city": "旧金山",
+      "address": "",
+      "checkIn": "",
+      "checkOut": ""
+    },
+    {
+      "date": "2026-10-01",
+      "name": "波特兰酒店（待补充）",
+      "type": "hotel",
+      "city": "波特兰",
+      "address": "",
+      "checkIn": "",
+      "checkOut": ""
+    },
+    {
+      "date": "2026-10-02",
+      "name": "波特兰酒店（待补充）",
+      "type": "hotel",
+      "city": "波特兰",
+      "address": "",
+      "checkIn": "",
+      "checkOut": ""
+    },
+    {
+      "date": "2026-10-03",
+      "name": "萨克拉门托酒店",
+      "type": "hotel",
+      "city": "萨克拉门托",
+      "address": "Capitol Park 附近",
+      "checkIn": "16:00",
+      "checkOut": "10月4日 11:00"
+    },
+    {
+      "date": "2026-10-04",
+      "name": "小孙家",
+      "type": "friend",
+      "city": "旧金山",
+      "address": "",
+      "checkIn": "",
+      "checkOut": ""
+    },
+    {
+      "date": "2026-10-05",
+      "name": "飞机上",
+      "type": "flight",
+      "city": "",
+      "address": "",
+      "checkIn": "",
+      "checkOut": ""
+    }
+  ],
+  "daily": [
+    {
+      "date": "2026-09-24",
+      "weekday": "周四",
+      "city": "上海 → 旧金山",
+      "accommodation": "小张家",
+      "activities": [
+        { "time": "13:10", "title": "浦东机场起飞", "location": "PVG T2", "type": "flight", "note": "韩亚 OZ364", "lat": 31.1443, "lng": 121.8083 },
+        { "time": "16:00", "title": "抵达首尔仁川", "location": "ICN T2", "type": "flight", "note": "中转 5 小时", "lat": 37.4691, "lng": 126.4505 },
+        { "time": "21:00", "title": "仁川机场起飞", "location": "ICN T2", "type": "flight", "note": "韩亚 OZ212", "lat": 37.4691, "lng": 126.4505 },
+        { "time": "15:30", "title": "抵达旧金山", "location": "SFO", "type": "flight", "note": "当地时间 9.24 15:30 抵达", "lat": 37.6213, "lng": -122.379 }
+      ]
+    },
+    {
+      "date": "2026-09-25",
+      "weekday": "周五",
+      "city": "旧金山 → 洛杉矶",
+      "accommodation": "洛杉矶酒店（待补充）",
+      "activities": [
+        { "time": "10:35", "title": "SFO 起飞", "location": "SFO", "type": "flight", "note": "Southwest WN3714 飞伯班克", "lat": 37.6213, "lng": -122.379 },
+        { "time": "11:50", "title": "抵达伯班克", "location": "BUR", "type": "flight", "note": "Burbank Airport", "lat": 34.2007, "lng": -118.3585 },
+        { "time": "午后", "title": "Erewhon", "location": "洛杉矶", "type": "food", "note": "小张推荐", "lat": 34.0901, "lng": -118.385 },
+        { "time": "下午", "title": "Malibu / Laguna Beach", "location": "洛杉矶周边", "type": "sight", "note": "海边打卡", "lat": 33.5436, "lng": -117.7834 },
+        { "time": "晚上", "title": "Dinner", "location": "洛杉矶", "type": "food", "note": "晚餐", "lat": 34.0522, "lng": -118.2437 }
+      ]
+    },
+    {
+      "date": "2026-09-26",
+      "weekday": "周六",
+      "city": "洛杉矶",
+      "accommodation": "洛杉矶酒店（待补充）",
+      "activities": [
+        { "time": "上午", "title": "Community Goods", "location": "洛杉矶", "type": "cafe", "note": "小张推荐", "lat": 34.0901, "lng": -118.385 },
+        { "time": "下午", "title": "Waken Lake", "location": "洛杉矶", "type": "sight", "note": "小张推荐", "lat": 34.0522, "lng": -118.2437 },
+        { "time": "下午", "title": "Melrose", "location": "洛杉矶", "type": "sight", "note": "逛街/拍照", "lat": 34.0837, "lng": -118.3506 },
+        { "time": "晚上", "title": "Clubbing", "location": "洛杉矶", "type": "nightlife", "note": "Exchange?（待确认）", "lat": 34.0407, "lng": -118.2468 }
+      ]
+    },
+    {
+      "date": "2026-09-27",
+      "weekday": "周日",
+      "city": "洛杉矶 → 旧金山湾区",
+      "accommodation": "Graduate by Hilton Palo Alto",
+      "activities": [
+        { "time": "上午", "title": "Maru Coffee", "location": "洛杉矶", "type": "cafe", "note": "小张推荐", "lat": 34.0901, "lng": -118.385 },
+        { "time": "中午", "title": "LAX In-N-Out", "location": "洛杉矶", "type": "food", "note": "小张推荐", "lat": 33.9416, "lng": -118.4085 },
+        { "time": "17:30", "title": "Lash", "location": "洛杉矶", "type": "service", "note": "预约 17:30", "lat": 34.0522, "lng": -118.2437 },
+        { "time": "20:45", "title": "伯班克起飞", "location": "BUR", "type": "flight", "note": "Southwest WN2922", "lat": 34.2007, "lng": -118.3585 },
+        { "time": "22:05", "title": "抵达 SFO", "location": "SFO", "type": "flight", "note": "返回湾区，入住 Palo Alto 酒店", "lat": 37.6213, "lng": -122.379 }
+      ]
+    },
+    {
+      "date": "2026-09-28",
+      "weekday": "周一",
+      "city": "旧金山湾区",
+      "accommodation": "Graduate by Hilton Palo Alto",
+      "activities": [
+        { "time": "全天", "title": "待安排", "location": "湾区", "type": "other", "note": "可在 JSON 中补充", "lat": 37.4419, "lng": -122.143 }
+      ]
+    },
+    {
+      "date": "2026-09-29",
+      "weekday": "周二",
+      "city": "旧金山湾区",
+      "accommodation": "Graduate by Hilton Palo Alto",
+      "activities": [
+        { "time": "全天", "title": "待安排", "location": "湾区", "type": "other", "note": "可在 JSON 中补充", "lat": 37.4419, "lng": -122.143 }
+      ]
+    },
+    {
+      "date": "2026-09-30",
+      "weekday": "周三",
+      "city": "Palo Alto → 旧金山",
+      "accommodation": "小孙家",
+      "activities": [
+        { "time": "11:00", "title": "酒店退房", "location": "Graduate by Hilton Palo Alto", "type": "hotel", "note": "退房时间 11:00", "lat": 37.4439, "lng": -122.1615 },
+        { "time": "白天", "title": "斯坦福大学", "location": "Stanford, CA", "type": "sight", "note": "Meyer Green 等校园景点", "lat": 37.4275, "lng": -122.1697 },
+        { "time": "白天", "title": "El Palo Alto Tree", "location": "Palo Alto, CA", "type": "sight", "note": "Palo Alto 城市命名的古老巨杉", "lat": 37.4197, "lng": -122.132 },
+        { "time": "19:30", "title": "Selby's 晚餐", "location": "Redwood City, CA", "type": "food", "note": "已预约，与 小张、小孙", "lat": 37.4849, "lng": -122.2281 },
+        { "time": "晚上", "title": "住小孙家", "location": "旧金山", "type": "accommodation", "note": "", "lat": 37.7749, "lng": -122.4194 }
+      ]
+    },
+    {
+      "date": "2026-10-01",
+      "weekday": "周四",
+      "city": "湾区 → 波特兰",
+      "accommodation": "波特兰酒店（待补充）",
+      "activities": [
+        { "time": "15:30", "title": "SJC 起飞", "location": "San Jose SJC", "type": "flight", "note": "航班 3330 飞波特兰", "lat": 37.3639, "lng": -121.9289 },
+        { "time": "17:20", "title": "抵达波特兰", "location": "PDX", "type": "flight", "note": "", "lat": 45.5898, "lng": -122.5951 }
+      ]
+    },
+    {
+      "date": "2026-10-02",
+      "weekday": "周五",
+      "city": "波特兰",
+      "accommodation": "波特兰酒店（待补充）",
+      "activities": [
+        { "time": "全天", "title": "待安排", "location": "波特兰", "type": "other", "note": "可在 JSON 中补充", "lat": 45.5152, "lng": -122.6784 }
+      ]
+    },
+    {
+      "date": "2026-10-03",
+      "weekday": "周六",
+      "city": "波特兰 → 萨克拉门托",
+      "accommodation": "萨克拉门托酒店",
+      "activities": [
+        { "time": "白天", "title": "波特兰活动", "location": "波特兰", "type": "other", "note": "待安排", "lat": 45.5152, "lng": -122.6784 },
+        { "time": "17:50", "title": "PDX 起飞", "location": "PDX", "type": "flight", "note": "航班 3330 回 SJC", "lat": 45.5898, "lng": -122.5951 },
+        { "time": "19:40", "title": "抵达 SJC", "location": "San Jose SJC", "type": "flight", "note": "", "lat": 37.3639, "lng": -121.9289 },
+        { "time": "晚上", "title": "入住萨克拉门托酒店", "location": "萨克拉门托", "type": "hotel", "note": "Capitol Park / 天际线景观", "lat": 38.5816, "lng": -121.4944 }
+      ]
+    },
+    {
+      "date": "2026-10-04",
+      "weekday": "周日",
+      "city": "萨克拉门托 → 旧金山",
+      "accommodation": "小孙家",
+      "activities": [
+        { "time": "白天", "title": "Aftershock 音乐节", "location": "萨克拉门托", "type": "event", "note": "门票已购买", "lat": 38.5816, "lng": -121.4944 },
+        { "time": "晚上", "title": "返回旧金山", "location": "旧金山", "type": "transfer", "note": "住小孙家", "lat": 37.7749, "lng": -122.4194 }
+      ]
+    },
+    {
+      "date": "2026-10-05",
+      "weekday": "周一",
+      "city": "旧金山 → 上海",
+      "accommodation": "飞机上",
+      "activities": [
+        { "time": "白天", "title": "旧金山自由活动", "location": "旧金山", "type": "other", "note": "待安排", "lat": 37.7749, "lng": -122.4194 },
+        { "time": "23:20", "title": "SFO 起飞", "location": "SFO", "type": "flight", "note": "韩亚 OZ211 飞首尔", "lat": 37.6213, "lng": -122.379 }
+      ]
+    },
+    {
+      "date": "2026-10-06",
+      "weekday": "周二",
+      "city": "飞机上",
+      "accommodation": "飞机上",
+      "activities": [
+        { "time": "全天", "title": "飞行中", "location": "太平洋上空", "type": "flight", "note": "SFO → ICN", "lat": 0, "lng": 0 }
+      ]
+    },
+    {
+      "date": "2026-10-07",
+      "weekday": "周三",
+      "city": "首尔 → 上海",
+      "accommodation": "到家",
+      "activities": [
+        { "time": "04:25", "title": "抵达首尔仁川", "location": "ICN T2", "type": "flight", "note": "中转 4h35m", "lat": 37.4691, "lng": 126.4505 },
+        { "time": "09:00", "title": "仁川起飞", "location": "ICN T2", "type": "flight", "note": "韩亚 OZ361", "lat": 37.4691, "lng": 126.4505 },
+        { "time": "10:05", "title": "抵达上海浦东", "location": "PVG T2", "type": "flight", "note": "旅程结束", "lat": 31.1443, "lng": 121.8083 }
+      ]
+    }
+  ],
+  "hotspots": [
+    {
+      "id": "h1",
+      "name": "金门大桥",
+      "description": "旧金山必去地标，经典红色大桥",
+      "address": "Golden Gate Bridge, San Francisco, CA",
+      "source": "个人",
+      "sourceUrl": "",
+      "bestTime": "日出或傍晚",
+      "needBooking": false,
+      "addedToPlan": false,
+      "lat": 37.8199,
+      "lng": -122.4783
+    },
+    {
+      "id": "h2",
+      "name": "旧金山 Cable Car",
+      "description": "旧金山标志性电车体验",
+      "address": "Powell St, San Francisco, CA",
+      "source": "个人",
+      "sourceUrl": "",
+      "bestTime": "白天",
+      "needBooking": false,
+      "addedToPlan": false,
+      "lat": 37.7849,
+      "lng": -122.4074
+    },
+    {
+      "id": "h3",
+      "name": "Twin Peaks",
+      "description": "山上看日落，能看到城市的蓝调时刻和无死角日落",
+      "address": "501 Twin Peaks Blvd, San Francisco, CA 94114",
+      "source": "小红书",
+      "sourceUrl": "https://www.xiaohongshu.com/discovery/item/69d20983000000001a02a403",
+      "bestTime": "日落前 30 分钟",
+      "needBooking": false,
+      "addedToPlan": false,
+      "lat": 37.7516,
+      "lng": -122.4477
+    },
+    {
+      "id": "h4",
+      "name": "Warming Hut Park Store",
+      "description": "黄金机位，能从窗框中拍到金门大桥",
+      "address": "Crissy Field, San Francisco, CA",
+      "source": "小红书",
+      "sourceUrl": "https://www.xiaohongshu.com/discovery/item/69d20983000000001a02a403",
+      "bestTime": "白天",
+      "needBooking": false,
+      "addedToPlan": false,
+      "lat": 37.8037,
+      "lng": -122.4658
+    },
+    {
+      "id": "h5",
+      "name": "Powell St & California St",
+      "description": "旧金山必去机位，纵伸视角很像盗梦空间",
+      "address": "Powell St & California St, San Francisco, CA",
+      "source": "小红书",
+      "sourceUrl": "https://www.xiaohongshu.com/discovery/item/69d20983000000001a02a403",
+      "bestTime": "白天",
+      "needBooking": false,
+      "addedToPlan": false,
+      "lat": 37.793,
+      "lng": -122.4089
+    },
+    {
+      "id": "h6",
+      "name": "El Palo Alto Tree",
+      "description": "Palo Alto 城市就是以这颗古老的巨杉命名的",
+      "address": "Palo Alto, CA",
+      "source": "个人",
+      "sourceUrl": "",
+      "bestTime": "白天",
+      "needBooking": false,
+      "addedToPlan": true,
+      "lat": 37.4197,
+      "lng": -122.132
+    }
+  ],
+  "reservations": [
+    {
+      "id": "r1",
+      "title": "Selby's 晚餐",
+      "date": "2026-09-30",
+      "time": "19:30",
+      "location": "Redwood City, CA",
+      "status": "confirmed",
+      "note": "与 小张、小孙",
+      "url": "",
+      "lat": 37.4849,
+      "lng": -122.2281
+    },
+    {
+      "id": "r2",
+      "title": "Aftershock 音乐节",
+      "date": "2026-10-04",
+      "time": "",
+      "location": "萨克拉门托",
+      "status": "purchased",
+      "note": "门票已购买",
+      "url": "",
+      "lat": 38.5816,
+      "lng": -121.4944
+    }
+  ],
+  "checklist": [
+    {
+      "category": "证件",
+      "items": [
+        { "id": "c1", "text": "护照", "done": false },
+        { "id": "c2", "text": "美国签证 / ESTA", "done": false },
+        { "id": "c3", "text": "EVUS 登记（B1/B2 签证）", "done": false },
+        { "id": "c4", "text": "身份证", "done": false },
+        { "id": "c5", "text": "驾照及翻译件（如需租车）", "done": false }
+      ]
+    },
+    {
+      "category": "预订备份",
+      "items": [
+        { "id": "c6", "text": "机票行程单截图", "done": false },
+        { "id": "c7", "text": "酒店确认单截图", "done": false },
+        { "id": "c8", "text": "餐厅 / 活动预约截图", "done": false }
+      ]
+    },
+    {
+      "category": "通讯与财务",
+      "items": [
+        { "id": "c9", "text": "美国电话卡 / 国际漫游", "done": false },
+        { "id": "c10", "text": "信用卡（Visa/Mastercard）", "done": false },
+        { "id": "c11", "text": "少量美元现金", "done": false },
+        { "id": "c12", "text": "Google Maps 离线地图", "done": false }
+      ]
+    },
+    {
+      "category": "电子产品",
+      "items": [
+        { "id": "c13", "text": "转换插头（美标）", "done": false },
+        { "id": "c14", "text": "充电宝", "done": false },
+        { "id": "c15", "text": "充电线", "done": false },
+        { "id": "c16", "text": "降噪耳机", "done": false },
+        { "id": "c17", "text": "颈枕", "done": false },
+        { "id": "c18", "text": "眼罩", "done": false }
+      ]
+    },
+    {
+      "category": "飞机舒适",
+      "items": [
+        { "id": "c19", "text": "防褥疮充气坐垫", "done": false },
+        { "id": "c20", "text": "便携纸片凳", "done": false },
+        { "id": "c21", "text": "保湿口罩", "done": false },
+        { "id": "c22", "text": "静脉曲张袜", "done": false },
+        { "id": "c23", "text": "晕船药 / 晕车药", "done": false }
+      ]
+    },
+    {
+      "category": "衣物",
+      "items": [
+        { "id": "c24", "text": "红色挂脖连衣裙", "done": false },
+        { "id": "c25", "text": "破洞挂脖", "done": false },
+        { "id": "c26", "text": "薄羽绒", "done": false },
+        { "id": "c27", "text": "卡其色工装外套", "done": false },
+        { "id": "c28", "text": "黑色立领外套", "done": false },
+        { "id": "c29", "text": "花抹胸 + 白色亚麻长裤", "done": false },
+        { "id": "c30", "text": "花朵泡泡长袖", "done": false }
+      ]
+    },
+    {
+      "category": "日用",
+      "items": [
+        { "id": "c31", "text": "牙刷牙膏", "done": false },
+        { "id": "c32", "text": "睡衣", "done": false },
+        { "id": "c33", "text": "一次性短裤", "done": false },
+        { "id": "c34", "text": "鼻通", "done": false },
+        { "id": "c35", "text": "湿厕纸", "done": false },
+        { "id": "c36", "text": "一次性马桶贴", "done": false },
+        { "id": "c37", "text": "一次性浴巾", "done": false },
+        { "id": "c38", "text": "护发素", "done": false },
+        { "id": "c39", "text": "酒精湿巾", "done": false },
+        { "id": "c40", "text": "牙刷梳子", "done": false }
+      ]
+    },
+    {
+      "category": "礼物",
+      "items": [
+        { "id": "c41", "text": "墨水", "done": false },
+        { "id": "c42", "text": "挂件", "done": false },
+        { "id": "c43", "text": "2人玩偶", "done": false },
+        { "id": "c44", "text": "茶包", "done": false },
+        { "id": "c45", "text": "咖啡", "done": false },
+        { "id": "c46", "text": "杯垫", "done": false }
+      ]
+    },
+    {
+      "category": "其他",
+      "items": [
+        { "id": "c47", "text": "防晒霜", "done": false },
+        { "id": "c48", "text": "墨镜", "done": false },
+        { "id": "c49", "text": "常用药品", "done": false },
+        { "id": "c50", "text": "小零食", "done": false }
+      ]
+    }
+  ]
+}
