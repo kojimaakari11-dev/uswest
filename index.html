@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <meta name="theme-color" content="#46708F" />
   <meta name="color-scheme" content="light dark" />
-<title>美国西岸之旅 · 实时行程助手</title>
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<title>US West Trip · Itinerary</title>
 <style>
   :root {
     --primary: #46708F;
@@ -295,7 +296,9 @@
   .checklist-item { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--border); }
   .checklist-item:last-child { border-bottom: none; }
   .checklist-item input[type=checkbox] { width: 20px; height: 20px; accent-color: var(--primary); flex-shrink: 0; }
-  .checklist-item span { font-size: 14px; flex: 1; min-width: 0; word-break: break-word; }
+  .checklist-item span { font-size: 14px; flex: 1; min-width: 0; word-break: break-word; cursor: text; }
+  .checklist-item span:hover { color: var(--primary); }
+  .checklist-item input.cl-edit { font-size: 14px; flex: 1; min-width: 0; padding: 2px 4px; border: 1.5px solid var(--primary); border-radius: 6px; background: var(--card); color: var(--text); }
   .checklist-item.done span { text-decoration: line-through; color: var(--text-light); }
   .cl-del {
     flex: 0 0 auto; border: none; background: transparent; color: #cbd5e1;
@@ -355,6 +358,19 @@
   .sheet-title { font-size: 17px; font-weight: 800; margin: 0; line-height: 1.35; }
   .sheet-body { padding: 14px 18px; overflow-y: auto; }
   .sheet-row { margin-bottom: 12px; }
+  .plan-box { margin-top: 14px; border-top: 1px solid var(--border); padding-top: 14px; }
+  .plan-picker { margin-top: 12px; }
+  .plan-dates { max-height: 168px; overflow-y: auto; border: 1px solid var(--border); border-radius: 10px; padding: 4px; margin-bottom: 10px; }
+  .plan-date { display: flex; align-items: center; gap: 8px; font-size: 13px; padding: 8px 6px; border-radius: 8px; cursor: pointer; }
+  .plan-date:active { background: var(--card); }
+  .plan-date.sel { background: var(--card); color: var(--primary); font-weight: 500; }
+  .plan-chk { width: 16px; height: 16px; border-radius: 4px; border: 1.5px solid #c7c7cc; flex: 0 0 auto; }
+  .plan-date.sel .plan-chk { background: var(--primary); border-color: var(--primary); }
+  .plan-seg { display: flex; gap: 8px; margin-bottom: 12px; }
+  .plan-seg div { flex: 1; text-align: center; font-size: 13px; padding: 8px 0; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; }
+  .plan-seg div.sel { border-color: var(--primary); color: var(--primary); }
+  .tl-title-edit { cursor: text; }
+  .tl-title-edit:hover { color: var(--primary); }
   .sheet-label { font-size: 11.5px; color: var(--text-light); margin-bottom: 2px; }
   .sheet-value { font-size: 14.5px; word-break: break-word; }
   .sheet-foot { display: flex; gap: 10px; padding: 12px 18px; border-top: 1px solid var(--border); }
@@ -372,7 +388,7 @@
 <body>
 <div class="container">
   <header class="header">
-    <h1 class="header-title" id="app-title">美国西岸之旅</h1>
+    <h1 class="header-title" id="app-title">US West Trip</h1>
     <div class="header-meta" id="app-meta">旧金山 · 洛杉矶 · 波特兰 · 9.24 - 10.7</div>
   </header>
 
@@ -495,6 +511,7 @@
   var CHECKLIST_KEY = 'uswest.checklist.v2';
   var CHECKLIST_KEY_V1 = 'uswest.checklist.v1';
   var DONE_ACTS_KEY = 'uswest.doneActs.v1';
+  var ADDED_ACTS_KEY = 'uswest.addedActs.v1';
   var LEGACY_KEY = 'travelPlanState';
 
   // 机场坐标：给航班行程点提供导航落点；可在 travel-data.json 的 airports 里覆盖
@@ -528,6 +545,7 @@
   var nextTargetMs = Infinity;
   var checklistData = null;
   var doneActs = {};          // 已勾掉的行程点：key -> 1
+  var addedActs = {};         // 从备选加入日程的点：hsId -> 条目
   var shownDoneDate = null;   // 当前这一天是否展开已收起的行程点
 
   // ===== 工具 =====
@@ -722,6 +740,16 @@
     try { localStorage.setItem(DONE_ACTS_KEY, JSON.stringify(doneActs)); } catch (e) { /* 存储不可用 */ }
   }
 
+  function loadAddedActs() {
+    try {
+      var raw = JSON.parse(localStorage.getItem(ADDED_ACTS_KEY) || '{}');
+      addedActs = (raw && typeof raw === 'object' && !Array.isArray(raw)) ? raw : {};
+    } catch (e) { addedActs = {}; }
+  }
+  function saveAddedActs() {
+    try { localStorage.setItem(ADDED_ACTS_KEY, JSON.stringify(addedActs)); } catch (e) { /* 存储不可用 */ }
+  }
+
   function isPointDone(p) { return !!(p && p.doneKey && doneActs[p.doneKey]); }
 
   // ===== 行程点（排序后用于「下一站」）=====
@@ -756,6 +784,23 @@
           lat: a.lat != null ? a.lat : null,
           lng: a.lng != null ? a.lng : null
         });
+      });
+    });
+
+    var dayMap = {};
+    (appData.daily || []).forEach(function (d) { dayMap[d.date] = d; });
+    Object.keys(addedActs).forEach(function (k) {
+      var a = addedActs[k];
+      var day = dayMap[a.date];
+      if (!day) return;
+      var pt = parseActivityTime({ time: a.time });
+      if (!pt) return;
+      var ms = zoned(a.date, pad2(pt.h) + ':' + pad2(pt.m), tripTz).getTime();
+      pts.push({
+        time: new Date(ms), exact: pt.exact, timeLabel: pt.label,
+        doneKey: doneActKey(a.date, a), date: a.date, weekday: day.weekday || '',
+        title: a.title, type: 'sight', location: a.location || '', address: a.address || '',
+        note: a.note || '', lat: a.lat != null ? a.lat : null, lng: a.lng != null ? a.lng : null
       });
     });
 
@@ -946,7 +991,17 @@
       day.date + ' ' + (day.weekday || '') + ' · ' + (day.city || '') + (isToday ? '（今天）' : '');
     document.getElementById('day-accommodation').textContent = '🏨 今晚住：' + (day.accommodation || '待补充');
 
-    var acts = day.activities || [];
+    var acts = (day.activities || []).slice();
+    Object.keys(addedActs).forEach(function (k) {
+      var a = addedActs[k];
+      if (a.date === day.date) {
+        acts.push({
+          type: 'sight', time: a.time, title: a.title, location: a.location || '',
+          address: a.address || '', note: a.note || '', lat: a.lat != null ? a.lat : null,
+          lng: a.lng != null ? a.lng : null, _added: true, _hsId: k
+        });
+      }
+    });
     var box = document.getElementById('day-activities');
     var chainBtn = document.getElementById('day-chain');
 
@@ -971,6 +1026,13 @@
       ? function () { window.open(multiStopUrl(geo), '_blank', 'noopener'); }
       : null;
 
+    function editableTitle(a) {
+      var base = typeIcon(a.type) + ' ' + esc(a.title);
+      return a._added
+        ? '<span class="tl-title-edit" data-added="' + esc(a._hsId) + '">' + base + '</span>'
+        : base;
+    }
+
     var listHtml = show.map(function (i, j) {
       var a = acts[i];
       var done = doneFlags[i];
@@ -981,12 +1043,12 @@
       var body = compact
         ? '<div class="tl-body" data-act="' + i + '">' +
             '<span class="tl-time">' + esc(a.time || '全天') + '</span>' +
-            '<span class="tl-title">' + typeIcon(a.type) + ' ' + esc(a.title) + '</span>' +
+            '<span class="tl-title">' + editableTitle(a) + '</span>' +
             (a.location ? '<span class="tl-loc">· ' + esc(a.location) + '</span>' : '') +
           '</div>'
         : '<div class="tl-body" data-act="' + i + '">' +
             '<div class="tl-time">' + esc(a.time || '全天') + '</div>' +
-            '<div class="tl-title">' + typeIcon(a.type) + ' ' + esc(a.title) + '</div>' +
+            '<div class="tl-title">' + editableTitle(a) + '</div>' +
             '<div class="tl-loc">📍 ' + esc(a.location || '') + '</div>' +
             (a.note ? '<div class="tl-note">' + esc(a.note) + '</div>' : '') +
             '<div class="tl-actions">' +
@@ -1054,6 +1116,13 @@
         openActivitySheet(day, acts[+el.dataset.act]);
       });
     });
+
+    box.querySelectorAll('[data-added]').forEach(function (sp) {
+      sp.addEventListener('click', function (e) {
+        e.stopPropagation();
+        startAddedEdit(sp, sp.dataset.added);
+      });
+    });
   }
 
   // ===== 打卡地 =====
@@ -1070,7 +1139,7 @@
         '<p class="hotspot-desc">' + esc(h.description) + '</p>' +
         '<div class="hotspot-tags">' +
           '<span class="tag ' + (h.source === '小红书' ? 'source-xhs' : '') + '">' + esc(h.source) + '</span>' +
-          '<span class="tag ' + (h.addedToPlan ? 'added' : '') + '">' + (h.addedToPlan ? '已加入' : '可选') + '</span>' +
+          '<span class="tag ' + (addedActs[h.id] ? 'added' : '') + '">' + (addedActs[h.id] ? '已加入' : '可选') + '</span>' +
           (h.needBooking ? '<span class="tag">需预约</span>' : '') +
         '</div>' +
       '</div>';
@@ -1322,11 +1391,11 @@
       return '<div class="checklist-category">' +
         '<h4 class="checklist-title">' + esc(c.category) + '</h4>' +
         c.items.map(function (item, ii) {
-          return '<label class="checklist-item' + (item.done ? ' done' : '') + '">' +
+          return '<div class="checklist-item' + (item.done ? ' done' : '') + '">' +
             '<input type="checkbox" data-ci="' + ci + '" data-ii="' + ii + '"' + (item.done ? ' checked' : '') + '>' +
-            '<span>' + esc(item.text) + '</span>' +
+            '<span class="cl-text" data-edit="' + ci + ':' + ii + '">' + esc(item.text) + '</span>' +
             '<button type="button" class="cl-del" data-del="' + ci + ':' + ii + '" title="删除">✕</button>' +
-          '</label>';
+          '</div>';
         }).join('') +
       '</div>';
     }).join('');
@@ -1351,6 +1420,41 @@
         syncCategoryOptions();
       });
     });
+
+    list.querySelectorAll('.cl-text').forEach(function (sp) {
+      sp.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var p = sp.dataset.edit.split(':');
+        startChecklistEdit(sp, +p[0], +p[1]);
+      });
+    });
+  }
+
+  function startChecklistEdit(span, ci, ii) {
+    if (span.querySelector('input')) return;
+    var item = checklistData[ci].items[ii];
+    var input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'cl-edit';
+    input.value = item.text;
+    span.textContent = '';
+    span.appendChild(input);
+    input.focus();
+    input.select();
+    var done = false;
+    function commit() {
+      if (done) return;
+      done = true;
+      var v = input.value.trim();
+      if (v) item.text = v;
+      saveChecklist();
+      renderChecklist();
+    }
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); commit(); }
+      else if (e.key === 'Escape') { done = true; renderChecklist(); }
+    });
+    input.addEventListener('blur', commit);
   }
 
   function initChecklist() {
@@ -1440,6 +1544,7 @@
     var h = (appData.hotspots || []).find(function (x) { return x.id === id; });
     if (!h) return;
     var hasGeo = h.lat != null && h.lng != null;
+    var added = !!addedActs[h.id];
     openSheet(h.name, [
       { label: '一句话', value: h.description },
       { label: '地址', value: h.address || '待补充' },
@@ -1450,8 +1555,122 @@
         value: esc(h.source) + (h.sourceUrl
           ? ' · <a href="' + esc(h.sourceUrl) + '" target="_blank" rel="noopener">查看原文</a>' : '')
       },
-      { label: '行程状态', value: h.addedToPlan ? '已加入行程' : '可选' }
+      { label: '行程状态', value: added ? '已加入行程' : '可选' }
     ], hasGeo ? navHref(h.lat, h.lng, h.name) : '#');
+
+    var body = document.getElementById('sheet-body');
+    var planBox = document.createElement('div');
+    planBox.className = 'plan-box';
+    planBox.innerHTML = planControlsHtml(h);
+    body.appendChild(planBox);
+    bindPlanControls(planBox, h);
+  }
+
+  function planControlsHtml(h) {
+    if (addedActs[h.id]) {
+      return '<button type="button" class="btn btn-outline plan-remove">已加入 · 移除</button>';
+    }
+    var dates = (appData.daily || []).map(function (d) {
+      return '<div class="plan-date" data-date="' + esc(d.date) + '">' +
+        '<span class="plan-chk"></span>' + esc(d.date) + ' ' + esc(d.weekday || '') + '</div>';
+    }).join('');
+    var seg = '<div class="plan-seg">' +
+      '<div data-seg="上午">上午</div><div class="sel" data-seg="下午">下午</div><div data-seg="晚上">晚上</div></div>';
+    return '<button type="button" class="btn btn-primary plan-add">加入日程</button>' +
+      '<div class="plan-picker" style="display:none">' +
+        '<div class="plan-dates">' + dates + '</div>' + seg +
+        '<button type="button" class="btn btn-primary plan-confirm">确认加入</button>' +
+      '</div>';
+  }
+
+  function bindPlanControls(box, h) {
+    var addBtn = box.querySelector('.plan-add');
+    if (addBtn) {
+      addBtn.addEventListener('click', function () {
+        var picker = box.querySelector('.plan-picker');
+        if (picker) picker.style.display = 'block';
+        addBtn.style.display = 'none';
+      });
+    }
+    var picker = box.querySelector('.plan-picker');
+    if (picker) {
+      var chosenDate = null;
+      var chosenSeg = '下午';
+      picker.querySelectorAll('.plan-date').forEach(function (el) {
+        el.addEventListener('click', function () {
+          picker.querySelectorAll('.plan-date').forEach(function (x) { x.classList.remove('sel'); });
+          el.classList.add('sel');
+          chosenDate = el.dataset.date;
+        });
+      });
+      picker.querySelectorAll('.plan-seg div').forEach(function (el) {
+        el.addEventListener('click', function () {
+          picker.querySelectorAll('.plan-seg div').forEach(function (x) { x.classList.remove('sel'); });
+          el.classList.add('sel');
+          chosenSeg = el.dataset.seg;
+        });
+      });
+      box.querySelector('.plan-confirm').addEventListener('click', function () {
+        if (!chosenDate) { alert('请先选择日期'); return; }
+        addToPlan(h, chosenDate, chosenSeg);
+      });
+    }
+    var rm = box.querySelector('.plan-remove');
+    if (rm) {
+      rm.addEventListener('click', function () { removeFromPlan(h.id); });
+    }
+  }
+
+  function addToPlan(h, date, time) {
+    addedActs[h.id] = {
+      date: date, time: time, title: h.name,
+      location: h.address || h.location || '', address: h.address || '',
+      note: h.description || '', lat: h.lat != null ? h.lat : null, lng: h.lng != null ? h.lng : null
+    };
+    saveAddedActs();
+    selectedDate = date;
+    var chips = document.querySelectorAll('.day-chip');
+    if (chips) chips.forEach(function (c) { c.classList.toggle('active', c.dataset.date === date); });
+    renderDayDetail();
+    renderHotspots();
+    closeSheet();
+  }
+
+  function removeFromPlan(hsId) {
+    delete addedActs[hsId];
+    saveAddedActs();
+    renderHotspots();
+    renderDayDetail();
+    closeSheet();
+  }
+
+  function startAddedEdit(span, hsId) {
+    if (span.querySelector('input')) return;
+    var a = addedActs[hsId];
+    if (!a) return;
+    var input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'cl-edit';
+    input.value = a.title;
+    span.textContent = '';
+    span.appendChild(input);
+    input.focus();
+    input.select();
+    var done = false;
+    function commit() {
+      if (done) return;
+      done = true;
+      var v = input.value.trim();
+      if (v) a.title = v;
+      saveAddedActs();
+      renderDayDetail();
+      renderHotspots();
+    }
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); commit(); }
+      else if (e.key === 'Escape') { done = true; renderDayDetail(); }
+    });
+    input.addEventListener('blur', commit);
   }
 
   function initSheet() {
@@ -1516,6 +1735,7 @@
     loadData().then(function () {
       checklistData = loadChecklist();
       loadDoneActs();
+      addedActs = loadAddedActs();
       points = buildPoints();
 
       // 渲染出错不要连累后面的模块，也不要误报成「数据加载失败」
