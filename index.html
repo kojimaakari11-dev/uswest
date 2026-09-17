@@ -3,26 +3,45 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<meta name="theme-color" content="#2563eb" />
+<meta name="theme-color" content="#46708F" />
+  <meta name="color-scheme" content="light dark" />
 <title>美国西岸之旅 · 实时行程助手</title>
 <style>
   :root {
-    --primary: #2563eb;
-    --primary-dark: #1d4ed8;
-    --accent: #f59e0b;
+    --primary: #46708F;
+    --primary-dark: #3a5c77;
+    --accent: #46708F;
     --success: #10b981;
     --danger: #ef4444;
-    --bg: #f8fafc;
-    --card: #ffffff;
-    --text: #1e293b;
-    --text-light: #64748b;
-    --border: #e2e8f0;
+    --bg: #F2F2F7;
+    --card: #FFFFFF;
+    --surface: #F2F2F7;
+    --text: #1C1C1E;
+    --text-light: #6E6E73;
+    --border: #E5E5EA;
     --shadow: 0 1px 3px rgba(0,0,0,0.08);
     --radius: 16px;
     --radius-sm: 10px;
     --ink: #0f172a;
     --ink-soft: #94a3b8;
     --ink-accent: #38bdf8;
+    --header-bg: rgba(242,242,247,0.92);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --primary: #8AA9C4;
+      --primary-dark: #6f8ba3;
+      --accent: #8AA9C4;
+      --bg: #000000;
+      --card: #1C1C1E;
+      --surface: #2C2C2E;
+      --text: #FFFFFF;
+      --text-light: rgba(235,235,245,0.45);
+      --border: rgba(84,84,88,0.6);
+      --shadow: 0 1px 3px rgba(0,0,0,0.45);
+      --header-bg: rgba(0,0,0,0.82);
+    }
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -39,7 +58,7 @@
   /* ---------- 顶部 ---------- */
   .header {
     position: sticky; top: 0; z-index: 100;
-    background: rgba(248, 250, 252, 0.94);
+    background: var(--header-bg);
     backdrop-filter: blur(12px);
     margin: 0 -16px; padding: 12px 16px;
     border-bottom: 1px solid var(--border);
@@ -70,22 +89,19 @@
   /* ---------- 下一站 ---------- */
   .next-card {
     position: relative; overflow: hidden; color: #fff;
-    background: linear-gradient(140deg, #2563eb 0%, #1d4ed8 58%, #1e3a8a 100%);
+    background: var(--ink);
+    border: 1px solid rgba(148,163,184,.18);
     border-radius: 18px; padding: 18px;
-    box-shadow: 0 12px 26px rgba(37, 99, 235, .22);
-  }
-  .next-card::before {
-    content: ""; position: absolute; top: -70px; right: -60px;
-    width: 200px; height: 200px; border-radius: 50%; background: rgba(255,255,255,.08);
+    box-shadow: 0 12px 26px rgba(15,23,42,.25);
   }
   .nx-top { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
   .nx-label { font-size: 11px; letter-spacing: 1.6px; text-transform: uppercase; opacity: .85; font-weight: 600; }
   .nx-badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; background: rgba(255,255,255,.18); }
   .nx-badge.ended { background: rgba(255,255,255,.14); }
-  .nx-title { position: relative; font-size: 24px; font-weight: 800; line-height: 1.25; margin: 0 0 8px; }
-  .nx-line { position: relative; display: flex; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 13px; opacity: .95; }
-  .nx-cd { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-weight: 700; background: rgba(255,255,255,.18); padding: 2px 9px; border-radius: 8px; font-size: 12.5px; }
-  .nx-cd-soft { font-family: inherit; font-weight: 600; letter-spacing: .5px; background: rgba(255,255,255,.14); }
+  .nx-title { position: relative; font-size: 22px; font-weight: 800; line-height: 1.25; margin: 0 0 6px; }
+  .nx-cd { position: relative; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-weight: 700; font-size: 30px; line-height: 1.1; letter-spacing: .5px; margin: 2px 0 8px; }
+  .nx-cd-soft { font-size: 22px; }
+  .nx-line { position: relative; display: flex; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 13px; opacity: .92; }
   .nx-row { position: relative; display: flex; gap: 7px; font-size: 12.5px; opacity: .92; margin-top: 7px; align-items: flex-start; }
   .nx-row .k { flex: 0 0 auto; }
   .nx-actions { position: relative; display: flex; gap: 8px; margin-top: 15px; }
@@ -111,13 +127,13 @@
     border-radius: var(--radius-sm); padding: 8px 12px; min-width: 64px;
     text-align: center; cursor: pointer; box-shadow: var(--shadow);
   }
-  .day-chip.active { border-color: var(--primary); background: rgba(37,99,235,.06); }
+  .day-chip.active { border-color: var(--primary); background: rgba(70,112,143,.08); }
   .day-chip .day-date { font-size: 13px; font-weight: 700; }
   .day-chip .day-week { font-size: 11px; color: var(--text-light); }
 
   .day-detail { background: var(--card); border-radius: var(--radius); padding: 16px; margin-top: 12px; box-shadow: var(--shadow); }
   .day-detail-title { font-size: 16px; font-weight: 700; margin: 0 0 8px; }
-  .day-accommodation { font-size: 13px; color: var(--text-light); background: var(--bg); padding: 9px 12px; border-radius: var(--radius-sm); margin-bottom: 16px; }
+  .day-accommodation { font-size: 13px; color: var(--text-light); background: var(--surface); padding: 9px 12px; border-radius: var(--radius-sm); margin-bottom: 16px; }
 
   .tl { position: relative; }
   .tl-item { position: relative; padding-left: 30px; padding-right: 30px; padding-bottom: 22px; }
@@ -144,7 +160,7 @@
   .tl-time { font-size: 12px; font-weight: 700; color: var(--primary); margin-bottom: 2px; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
   .tl-title { font-size: 15px; font-weight: 700; margin: 0 0 3px; }
   .tl-loc { font-size: 12.5px; color: var(--text-light); }
-  .tl-note { font-size: 12.5px; background: rgba(37,99,235,.06); padding: 7px 9px; border-radius: 8px; margin-top: 7px; }
+  .tl-note { font-size: 12.5px; background: rgba(70,112,143,.08); padding: 7px 9px; border-radius: 8px; margin-top: 7px; }
   .tl-leg {
     display: inline-flex; align-items: center; gap: 5px; margin-top: 9px;
     font-size: 11px; color: var(--text-light); background: var(--card);
@@ -195,7 +211,7 @@
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
   }
   .hotspot-tags { display: flex; gap: 6px; flex-wrap: wrap; }
-  .tag { font-size: 11px; padding: 3px 8px; border-radius: 12px; background: var(--bg); color: var(--text-light); }
+  .tag { font-size: 11px; padding: 3px 8px; border-radius: 12px; background: var(--surface); color: var(--text-light); }
   .tag.added { background: rgba(16,185,129,.12); color: var(--success); }
   .tag.source-xhs { background: rgba(239,68,68,.1); color: var(--danger); }
 
@@ -209,7 +225,7 @@
   .reservation-meta { font-size: 12px; color: var(--text-light); }
   .reservation-status { font-size: 12px; padding: 4px 10px; border-radius: 12px; font-weight: 600; flex: 0 0 auto; }
   .reservation-status.confirmed { background: rgba(16,185,129,.12); color: var(--success); }
-  .reservation-status.purchased { background: rgba(37,99,235,.12); color: var(--primary); }
+  .reservation-status.purchased { background: rgba(70,112,143,.12); color: var(--primary); }
 
   /* ---------- 航班横向卡片 ---------- */
   .flight-rail {
@@ -296,7 +312,7 @@
   /* ---------- JSON 编辑器 ---------- */
   .editor-trigger {
     position: fixed; bottom: 20px; right: 20px; width: 48px; height: 48px;
-    border-radius: 50%; background: var(--text); color: white; border: none;
+    border-radius: 50%; background: var(--surface); color: var(--text); border: 1px solid var(--border);
     font-size: 20px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,.2); z-index: 200;
   }
   .editor-mask { display: none; position: fixed; inset: 0; background: rgba(15,23,42,.5); z-index: 300; }
@@ -370,7 +386,8 @@
         <span class="nx-badge" id="nx-badge">—</span>
       </div>
       <h2 class="nx-title" id="nx-title">加载中…</h2>
-      <div class="nx-line" id="nx-line"><span class="nx-cd">--</span></div>
+      <div class="nx-cd" id="nx-cd">--</div>
+      <div class="nx-line" id="nx-line"></div>
       <div class="nx-row" id="nx-addr-row"><span class="k">📍</span><span id="nx-addr">—</span></div>
       <div class="nx-row" id="nx-note-row"><span class="k">📝</span><span id="nx-note">—</span></div>
       <div class="nx-actions">
@@ -395,9 +412,12 @@
     </div>
   </section>
 
-  <!-- 种草打卡地 -->
+  <!-- 备选打卡点 -->
   <section class="section" id="hotspots-section">
-    <h2 class="section-title">备选打卡点</h2>
+    <div class="section-head">
+      <h2 class="section-title">备选打卡点</h2>
+      <button class="btn btn-outline btn-small" id="hotspots-toggle">收起</button>
+    </div>
     <div class="hotspots-grid" id="hotspots-grid"></div>
   </section>
 
@@ -799,11 +819,8 @@
 
     document.getElementById('nx-title').textContent = p.title;
 
-    var line = document.getElementById('nx-line');
-    var cd = document.createElement('span');
-    cd.id = 'nx-cd';
+    var cd = document.getElementById('nx-cd');
     cd.className = 'nx-cd';
-    line.innerHTML = '';
     if (p.exact) {
       cd.dataset.target = String(p.time.getTime());
       cd.dataset.live = 'next';
@@ -813,12 +830,10 @@
       cd.classList.add('nx-cd-soft');
       cd.textContent = p.timeLabel;
     }
-    line.appendChild(cd);
-    if (p.weekday) {
-      var wd = document.createElement('span');
-      wd.textContent = p.weekday + (p.exact ? ' ' + p.timeLabel : '');
-      line.appendChild(wd);
-    }
+
+    var line = document.getElementById('nx-line');
+    var locPart = p.location || '';
+    line.textContent = (p.weekday ? p.weekday + ' ' : '') + p.timeLabel + (locPart ? ' · ' + locPart : '');
 
     document.getElementById('nx-addr').textContent = p.address || '';
     document.getElementById('nx-addr-row').classList.toggle('hidden', !p.address);
@@ -1516,6 +1531,13 @@
       initSheet();
       initEditor();
       initRail();
+
+      var hsToggle = document.getElementById('hotspots-toggle');
+      if (hsToggle) hsToggle.addEventListener('click', function () {
+        var grid = document.getElementById('hotspots-grid');
+        var collapsed = grid.classList.toggle('hidden');
+        this.textContent = collapsed ? '展开' : '收起';
+      });
 
       document.getElementById('nx-refresh').addEventListener('click', function () {
         points = buildPoints();
