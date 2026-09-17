@@ -1,1417 +1,1556 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>美国西岸之旅 · 实时行程助手</title>
-  <style>
-    :root {
-      --primary: #2563eb;
-      --primary-dark: #1d4ed8;
-      --accent: #f59e0b;
-      --success: #10b981;
-      --danger: #ef4444;
-      --bg: #f8fafc;
-      --card: #ffffff;
-      --text: #1e293b;
-      --text-light: #64748b;
-      --border: #e2e8f0;
-      --shadow: 0 1px 3px rgba(0,0,0,0.08);
-      --radius: 16px;
-      --radius-sm: 10px;
-    }
-
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    html, body {
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    .container {
-      max-width: 480px;
-      margin: 0 auto;
-      padding: 0 16px 100px;
-    }
-
-    /* Header */
-    .header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: rgba(248, 250, 252, 0.92);
-      backdrop-filter: blur(12px);
-      padding: 12px 0;
-      margin: 0 -16px;
-      padding-left: 16px;
-      padding-right: 16px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .header-title {
-      font-size: 18px;
-      font-weight: 700;
-      margin: 0;
-    }
-
-    .header-meta {
-      font-size: 12px;
-      color: var(--text-light);
-      margin-top: 2px;
-    }
-
-    /* Section */
-    .section {
-      margin-top: 20px;
-    }
-
-    .section-title {
-      font-size: 16px;
-      font-weight: 700;
-      margin: 0 0 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .section-title .icon {
-      font-size: 18px;
-    }
-
-    /* Now Card */
-    .now-card {
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-      color: white;
-      border-radius: var(--radius);
-      padding: 20px;
-      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.25);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .now-card::before {
-      content: "";
-      position: absolute;
-      top: -50%;
-      right: -30%;
-      width: 200px;
-      height: 200px;
-      background: rgba(255,255,255,0.08);
-      border-radius: 50%;
-    }
-
-    .now-label {
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      opacity: 0.9;
-      margin-bottom: 4px;
-    }
-
-    .now-place {
-      font-size: 26px;
-      font-weight: 800;
-      margin: 0 0 8px;
-      line-height: 1.2;
-    }
-
-    .now-time {
-      font-size: 15px;
-      opacity: 0.95;
-      margin-bottom: 16px;
-    }
-
-    .now-actions {
-      display: flex;
-      gap: 10px;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      border: none;
-      border-radius: var(--radius-sm);
-      padding: 12px 18px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.1s, opacity 0.1s;
-      text-decoration: none;
-    }
-
-    .btn:active {
-      transform: scale(0.97);
-    }
-
-    .btn-primary {
-      background: white;
-      color: var(--primary);
-      flex: 1;
-    }
-
-    .btn-secondary {
-      background: rgba(255,255,255,0.2);
-      color: white;
-      flex: 1;
-    }
-
-    .btn-outline {
-      background: var(--card);
-      color: var(--primary);
-      border: 1px solid var(--border);
-    }
-
-    .btn-small {
-      padding: 8px 12px;
-      font-size: 13px;
-    }
-
-    /* Today Route */
-    .route-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .route-date {
-      font-size: 14px;
-      color: var(--text-light);
-    }
-
-    .route-list {
-      background: var(--card);
-      border-radius: var(--radius);
-      padding: 16px;
-      box-shadow: var(--shadow);
-    }
-
-    .route-empty {
-      text-align: center;
-      color: var(--text-light);
-      padding: 24px 0;
-    }
-
-    .route-item {
-      position: relative;
-      padding-left: 28px;
-    }
-
-    .route-item:not(:last-child) {
-      padding-bottom: 28px;
-    }
-
-    .route-item::before {
-      content: "";
-      position: absolute;
-      left: 7px;
-      top: 8px;
-      bottom: -8px;
-      width: 2px;
-      border-left: 2px dashed var(--border);
-    }
-
-    .route-item:last-child::before {
-      display: none;
-    }
-
-    .route-dot {
-      position: absolute;
-      left: 0;
-      top: 4px;
-      width: 16px;
-      height: 16px;
-      background: var(--primary);
-      border-radius: 50%;
-      border: 3px solid white;
-      box-shadow: 0 0 0 2px var(--border);
-    }
-
-    .route-dot.flight { background: var(--accent); }
-    .route-dot.food { background: #f97316; }
-    .route-dot.sight { background: #8b5cf6; }
-    .route-dot.hotel { background: #06b6d4; }
-    .route-dot.event { background: var(--danger); }
-
-    .route-content {
-      background: var(--bg);
-      border-radius: var(--radius-sm);
-      padding: 12px;
-    }
-
-    .route-time {
-      font-size: 12px;
-      color: var(--primary);
-      font-weight: 700;
-      margin-bottom: 2px;
-    }
-
-    .route-title {
-      font-size: 15px;
-      font-weight: 700;
-      margin: 0 0 4px;
-    }
-
-    .route-location {
-      font-size: 13px;
-      color: var(--text-light);
-      margin-bottom: 8px;
-    }
-
-    .route-note {
-      font-size: 13px;
-      color: var(--text);
-      background: rgba(37, 99, 235, 0.06);
-      padding: 8px;
-      border-radius: 8px;
-      margin-bottom: 10px;
-    }
-
-    .route-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    .route-transport {
-      position: absolute;
-      left: 28px;
-      bottom: 4px;
-      font-size: 12px;
-      color: var(--text-light);
-      background: var(--card);
-      padding: 2px 8px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      z-index: 2;
-    }
-
-    /* Daily Cards */
-    .days-scroll {
-      display: flex;
-      gap: 10px;
-      overflow-x: auto;
-      padding-bottom: 8px;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
-
-    .days-scroll::-webkit-scrollbar {
-      display: none;
-    }
-
-    .day-chip {
-      flex-shrink: 0;
-      background: var(--card);
-      border: 2px solid transparent;
-      border-radius: var(--radius-sm);
-      padding: 10px 14px;
-      min-width: 72px;
-      text-align: center;
-      cursor: pointer;
-      box-shadow: var(--shadow);
-    }
-
-    .day-chip.active {
-      border-color: var(--primary);
-      background: rgba(37, 99, 235, 0.05);
-    }
-
-    .day-chip .day-date {
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .day-chip .day-week {
-      font-size: 11px;
-      color: var(--text-light);
-    }
-
-    .day-detail {
-      background: var(--card);
-      border-radius: var(--radius);
-      padding: 16px;
-      margin-top: 12px;
-      box-shadow: var(--shadow);
-    }
-
-    .day-detail-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .day-detail-title {
-      font-size: 16px;
-      font-weight: 700;
-      margin: 0;
-    }
-
-    .day-accommodation {
-      font-size: 13px;
-      color: var(--text-light);
-      background: var(--bg);
-      padding: 8px 12px;
-      border-radius: var(--radius-sm);
-      margin-bottom: 12px;
-    }
-
-    .day-activity {
-      display: flex;
-      gap: 12px;
-      padding: 10px 0;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .day-activity:last-child {
-      border-bottom: none;
-    }
-
-    .day-activity-time {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--primary);
-      min-width: 44px;
-    }
-
-    .day-activity-main {
-      flex: 1;
-    }
-
-    .day-activity-title {
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .day-activity-note {
-      font-size: 12px;
-      color: var(--text-light);
-      margin-top: 2px;
-    }
-
-    .day-activity-status {
-      font-size: 11px;
-      padding: 2px 8px;
-      border-radius: 12px;
-      background: var(--success);
-      color: white;
-      margin-left: 8px;
-    }
-
-    /* Hotspots */
-    .hotspots-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .hotspot-card {
-      background: var(--card);
-      border-radius: var(--radius-sm);
-      padding: 14px;
-      box-shadow: var(--shadow);
-      cursor: pointer;
-      transition: transform 0.1s;
-    }
-
-    .hotspot-card:active {
-      transform: scale(0.98);
-    }
-
-    .hotspot-name {
-      font-size: 14px;
-      font-weight: 700;
-      margin: 0 0 6px;
-      line-height: 1.3;
-    }
-
-    .hotspot-desc {
-      font-size: 12px;
-      color: var(--text-light);
-      line-height: 1.4;
-      margin-bottom: 10px;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .hotspot-tags {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .tag {
-      font-size: 11px;
-      padding: 3px 8px;
-      border-radius: 12px;
-      background: var(--bg);
-      color: var(--text-light);
-    }
-
-    .tag.added {
-      background: rgba(16, 185, 129, 0.12);
-      color: var(--success);
-    }
-
-    .tag.source-xhs {
-      background: rgba(239, 68, 68, 0.1);
-      color: var(--danger);
-    }
-
-    /* Flights */
-    .flight-card {
-      background: var(--card);
-      border-radius: var(--radius);
-      padding: 16px;
-      margin-bottom: 12px;
-      box-shadow: var(--shadow);
-    }
-
-    .flight-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .flight-type {
-      font-size: 12px;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 12px;
-      background: rgba(37, 99, 235, 0.1);
-      color: var(--primary);
-    }
-
-    .flight-type.return {
-      background: rgba(16, 185, 129, 0.1);
-      color: var(--success);
-    }
-
-    .flight-date {
-      font-size: 13px;
-      color: var(--text-light);
-    }
-
-    .flight-segment {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 10px;
-    }
-
-    .flight-airport {
-      text-align: center;
-      min-width: 56px;
-    }
-
-    .flight-code {
-      font-size: 18px;
-      font-weight: 800;
-    }
-
-    .flight-time {
-      font-size: 12px;
-      color: var(--text-light);
-    }
-
-    .flight-line {
-      flex: 1;
-      text-align: center;
-      position: relative;
-    }
-
-    .flight-line::before {
-      content: "";
-      display: block;
-      height: 2px;
-      background: var(--border);
-      margin-bottom: 4px;
-    }
-
-    .flight-duration {
-      font-size: 11px;
-      color: var(--text-light);
-    }
-
-    .flight-info {
-      font-size: 12px;
-      color: var(--text-light);
-      margin-top: 8px;
-    }
-
-    .flight-transfer {
-      background: var(--bg);
-      border-radius: var(--radius-sm);
-      padding: 10px;
-      font-size: 12px;
-      color: var(--text-light);
-      margin-top: 10px;
-    }
-
-    /* Checklist */
-    .checklist-category {
-      background: var(--card);
-      border-radius: var(--radius);
-      padding: 14px;
-      margin-bottom: 12px;
-      box-shadow: var(--shadow);
-    }
-
-    .checklist-title {
-      font-size: 14px;
-      font-weight: 700;
-      margin: 0 0 10px;
-      color: var(--text);
-    }
-
-    .checklist-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 0;
-      border-bottom: 1px solid var(--border);
-      cursor: pointer;
-    }
-
-    .checklist-item:last-child {
-      border-bottom: none;
-    }
-
-    .checklist-item input {
-      width: 20px;
-      height: 20px;
-      accent-color: var(--primary);
-      flex-shrink: 0;
-    }
-
-    .checklist-item.done span {
-      text-decoration: line-through;
-      color: var(--text-light);
-    }
-
-    .checklist-item span {
-      font-size: 14px;
-    }
-
-    /* Reservations */
-    .reservation-card {
-      background: var(--card);
-      border-radius: var(--radius-sm);
-      padding: 14px;
-      margin-bottom: 10px;
-      box-shadow: var(--shadow);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .reservation-main {
-      flex: 1;
-    }
-
-    .reservation-title {
-      font-size: 15px;
-      font-weight: 700;
-      margin: 0 0 4px;
-    }
-
-    .reservation-meta {
-      font-size: 12px;
-      color: var(--text-light);
-    }
-
-    .reservation-status {
-      font-size: 12px;
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-weight: 600;
-    }
-
-    .reservation-status.confirmed {
-      background: rgba(16, 185, 129, 0.12);
-      color: var(--success);
-    }
-
-    .reservation-status.purchased {
-      background: rgba(37, 99, 235, 0.12);
-      color: var(--primary);
-    }
-
-    /* Editor */
-    .editor-trigger {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: var(--text);
-      color: white;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      z-index: 200;
-    }
-
-    .editor-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      z-index: 300;
-    }
-
-    .editor-overlay.open {
-      display: block;
-    }
-
-    .editor-panel {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 80vh;
-      background: var(--card);
-      border-radius: var(--radius) var(--radius) 0 0;
-      z-index: 301;
-      display: flex;
-      flex-direction: column;
-      transform: translateY(100%);
-      transition: transform 0.3s ease;
-    }
-
-    .editor-overlay.open + .editor-panel,
-    .editor-panel.open {
-      transform: translateY(0);
-    }
-
-    .editor-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .editor-title {
-      font-size: 16px;
-      font-weight: 700;
-      margin: 0;
-    }
-
-    .editor-body {
-      flex: 1;
-      padding: 12px 16px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .editor-body textarea {
-      flex: 1;
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 12px;
-      font-family: "SF Mono", Monaco, monospace;
-      font-size: 12px;
-      resize: none;
-    }
-
-    .editor-footer {
-      padding: 12px 16px;
-      border-top: 1px solid var(--border);
-      display: flex;
-      gap: 10px;
-    }
-
-    .editor-footer .btn {
-      flex: 1;
-    }
-
-    .editor-tip {
-      font-size: 12px;
-      color: var(--text-light);
-      margin-top: 8px;
-    }
-
-    /* Modal */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      z-index: 400;
-      align-items: flex-end;
-      justify-content: center;
-    }
-
-    .modal-overlay.open {
-      display: flex;
-    }
-
-    .modal-content {
-      background: var(--card);
-      border-radius: var(--radius) var(--radius) 0 0;
-      width: 100%;
-      max-width: 480px;
-      max-height: 80vh;
-      overflow-y: auto;
-      padding: 20px;
-    }
-
-    .modal-title {
-      font-size: 18px;
-      font-weight: 800;
-      margin: 0 0 12px;
-    }
-
-    .modal-row {
-      margin-bottom: 12px;
-    }
-
-    .modal-label {
-      font-size: 12px;
-      color: var(--text-light);
-      margin-bottom: 2px;
-    }
-
-    .modal-value {
-      font-size: 15px;
-    }
-
-    .modal-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 16px;
-    }
-
-    /* Footer */
-    .footer {
-      text-align: center;
-      padding: 30px 0;
-      font-size: 12px;
-      color: var(--text-light);
-    }
-
-    .hidden {
-      display: none !important;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="theme-color" content="#2563eb" />
+<title>美国西岸之旅 · 实时行程助手</title>
+<style>
+  :root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --accent: #f59e0b;
+    --success: #10b981;
+    --danger: #ef4444;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --text: #1e293b;
+    --text-light: #64748b;
+    --border: #e2e8f0;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08);
+    --radius: 16px;
+    --radius-sm: 10px;
+    --ink: #0f172a;
+    --ink-soft: #94a3b8;
+    --ink-accent: #38bdf8;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container { max-width: 480px; margin: 0 auto; padding: 0 16px 100px; }
+
+  /* ---------- 顶部 ---------- */
+  .header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(248, 250, 252, 0.94);
+    backdrop-filter: blur(12px);
+    margin: 0 -16px; padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .header-title { font-size: 18px; font-weight: 700; margin: 0; }
+  .header-meta { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+
+  .section { margin-top: 22px; }
+  .section-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+  .section-title { font-size: 16px; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 7px; }
+  .section-title .icon { font-size: 17px; }
+
+  /* ---------- 按钮 ---------- */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    border: none; border-radius: var(--radius-sm); padding: 12px 16px;
+    font-size: 15px; font-weight: 600; cursor: pointer;
+    transition: transform .1s, background .15s, opacity .15s;
+    text-decoration: none; font-family: inherit;
+  }
+  .btn:active { transform: scale(.97); }
+  .btn-primary { background: white; color: var(--primary); }
+  .btn-secondary { background: rgba(255,255,255,.2); color: white; }
+  .btn-outline { background: var(--card); color: var(--primary); border: 1px solid var(--border); }
+  .btn-small { padding: 8px 12px; font-size: 13px; border-radius: 9px; }
+  .btn-chain { flex: 0 0 auto; white-space: nowrap; }
+
+  /* ---------- 下一站 ---------- */
+  .next-card {
+    position: relative; overflow: hidden; color: #fff;
+    background: linear-gradient(140deg, #2563eb 0%, #1d4ed8 58%, #1e3a8a 100%);
+    border-radius: 18px; padding: 18px;
+    box-shadow: 0 12px 26px rgba(37, 99, 235, .22);
+  }
+  .next-card::before {
+    content: ""; position: absolute; top: -70px; right: -60px;
+    width: 200px; height: 200px; border-radius: 50%; background: rgba(255,255,255,.08);
+  }
+  .nx-top { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+  .nx-label { font-size: 11px; letter-spacing: 1.6px; text-transform: uppercase; opacity: .85; font-weight: 600; }
+  .nx-badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; background: rgba(255,255,255,.18); }
+  .nx-badge.ended { background: rgba(255,255,255,.14); }
+  .nx-title { position: relative; font-size: 24px; font-weight: 800; line-height: 1.25; margin: 0 0 8px; }
+  .nx-line { position: relative; display: flex; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 13px; opacity: .95; }
+  .nx-cd { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-weight: 700; background: rgba(255,255,255,.18); padding: 2px 9px; border-radius: 8px; font-size: 12.5px; }
+  .nx-cd-soft { font-family: inherit; font-weight: 600; letter-spacing: .5px; background: rgba(255,255,255,.14); }
+  .nx-row { position: relative; display: flex; gap: 7px; font-size: 12.5px; opacity: .92; margin-top: 7px; align-items: flex-start; }
+  .nx-row .k { flex: 0 0 auto; }
+  .nx-actions { position: relative; display: flex; gap: 8px; margin-top: 15px; }
+  .nx-actions .btn { padding: 10px 12px; font-size: 13.5px; }
+  .nx-actions .btn-primary { flex: 1.5; }
+  .nx-actions .btn-secondary { flex: 1; }
+  .nx-up { position: relative; margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.2); }
+  .nx-up-label { font-size: 11px; letter-spacing: 1px; opacity: .72; font-weight: 600; margin-bottom: 6px; }
+  .nx-up-row { display: flex; align-items: baseline; gap: 8px; font-size: 12.5px; padding: 4px 0; }
+  .nx-up-time { font-family: ui-monospace, "SF Mono", Menlo, monospace; opacity: .85; flex: 0 0 auto; }
+  .nx-up-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* ---------- 日期条 + 当天时间轴 ---------- */
+  .daybar { display: flex; align-items: center; gap: 10px; }
+  .days-scroll {
+    flex: 1; min-width: 0; display: flex; gap: 8px;
+    overflow-x: auto; padding: 4px 0 6px;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  }
+  .days-scroll::-webkit-scrollbar { display: none; }
+  .day-chip {
+    flex: 0 0 auto; background: var(--card); border: 2px solid transparent;
+    border-radius: var(--radius-sm); padding: 8px 12px; min-width: 64px;
+    text-align: center; cursor: pointer; box-shadow: var(--shadow);
+  }
+  .day-chip.active { border-color: var(--primary); background: rgba(37,99,235,.06); }
+  .day-chip .day-date { font-size: 13px; font-weight: 700; }
+  .day-chip .day-week { font-size: 11px; color: var(--text-light); }
+
+  .day-detail { background: var(--card); border-radius: var(--radius); padding: 16px; margin-top: 12px; box-shadow: var(--shadow); }
+  .day-detail-title { font-size: 16px; font-weight: 700; margin: 0 0 8px; }
+  .day-accommodation { font-size: 13px; color: var(--text-light); background: var(--bg); padding: 9px 12px; border-radius: var(--radius-sm); margin-bottom: 16px; }
+
+  .tl { position: relative; }
+  .tl-item { position: relative; padding-left: 30px; padding-right: 30px; padding-bottom: 22px; }
+  .tl-item:last-child { padding-bottom: 0; }
+  .tl-item::before {
+    content: ""; position: absolute; left: 7px; top: 20px; bottom: 2px;
+    border-left: 2px dashed var(--border);
+  }
+  .tl-item:last-child::before { display: none; }
+  .tl-dot {
+    position: absolute; left: 0; top: 5px; width: 16px; height: 16px;
+    border-radius: 50%; background: var(--primary);
+    border: 3px solid #fff; box-shadow: 0 0 0 1px var(--border); z-index: 2;
+  }
+  .tl-dot.flight { background: var(--accent); }
+  .tl-dot.food, .tl-dot.cafe { background: #f97316; }
+  .tl-dot.sight { background: #8b5cf6; }
+  .tl-dot.hotel, .tl-dot.accommodation { background: #06b6d4; }
+  .tl-dot.event { background: var(--danger); }
+  .tl-dot.nightlife { background: #6366f1; }
+  .tl-dot.service, .tl-dot.transfer { background: #14b8a6; }
+
+  .tl-body { cursor: pointer; }
+  .tl-time { font-size: 12px; font-weight: 700; color: var(--primary); margin-bottom: 2px; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  .tl-title { font-size: 15px; font-weight: 700; margin: 0 0 3px; }
+  .tl-loc { font-size: 12.5px; color: var(--text-light); }
+  .tl-note { font-size: 12.5px; background: rgba(37,99,235,.06); padding: 7px 9px; border-radius: 8px; margin-top: 7px; }
+  .tl-leg {
+    display: inline-flex; align-items: center; gap: 5px; margin-top: 9px;
+    font-size: 11px; color: var(--text-light); background: var(--card);
+    border: 1px solid var(--border); border-radius: 11px; padding: 3px 10px;
+  }
+  .tl-actions { display: flex; gap: 8px; margin-top: 10px; }
+  .tl-actions .btn { padding: 7px 12px; font-size: 12.5px; }
+  .route-empty { text-align: center; color: var(--text-light); padding: 22px 0; font-size: 13px; }
+
+  /* 行程点「已完成」勾选框 */
+  .tl-check {
+    position: absolute; top: 0; right: 0; width: 24px; height: 24px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1.5px solid var(--border); border-radius: 50%;
+    background: #fff; color: transparent; font-size: 12px; line-height: 1;
+    cursor: pointer; padding: 0; transition: all .15s;
+  }
+  .tl-check:hover { border-color: var(--primary); color: var(--primary); }
+  .tl-check.on { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+  /* 航班类行程：单行简略样式 */
+  .tl-item.compact { padding-bottom: 13px; }
+  .tl-item.compact .tl-dot { top: 4px; width: 12px; height: 12px; border-width: 2px; }
+  .tl-item.compact::before { left: 5px; top: 18px; }
+  .tl-item.compact .tl-body { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; }
+  .tl-item.compact .tl-time { margin: 0; }
+  .tl-item.compact .tl-title { margin: 0; font-size: 13.5px; font-weight: 600; }
+  .tl-item.compact .tl-loc { margin: 0; font-size: 12px; }
+  .tl-item.compact .tl-leg { margin-top: 7px; }
+
+  /* 已收起的行程点 */
+  .tl-item.is-done { opacity: .55; }
+  .tl-item.is-done .tl-title, .tl-item.is-done .tl-loc { text-decoration: line-through; }
+  .tl-done-summary { text-align: center; padding: 14px 0 0; }
+  .tl-done-btn {
+    border: 1px dashed var(--border); background: transparent; color: var(--text-light);
+    font-size: 12px; padding: 5px 13px; border-radius: 12px; cursor: pointer;
+  }
+  .tl-done-btn:hover { color: var(--primary); border-color: var(--primary); }
+
+  /* ---------- 打卡地 ---------- */
+  .hotspots-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .hotspot-card { background: var(--card); border-radius: var(--radius-sm); padding: 14px; box-shadow: var(--shadow); cursor: pointer; transition: transform .1s; }
+  .hotspot-card:active { transform: scale(.98); }
+  .hotspot-name { font-size: 14px; font-weight: 700; margin: 0 0 6px; line-height: 1.3; }
+  .hotspot-desc {
+    font-size: 12px; color: var(--text-light); line-height: 1.4; margin: 0 0 10px;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .hotspot-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag { font-size: 11px; padding: 3px 8px; border-radius: 12px; background: var(--bg); color: var(--text-light); }
+  .tag.added { background: rgba(16,185,129,.12); color: var(--success); }
+  .tag.source-xhs { background: rgba(239,68,68,.1); color: var(--danger); }
+
+  /* ---------- 预订 ---------- */
+  .reservation-card {
+    background: var(--card); border-radius: var(--radius-sm); padding: 14px;
+    margin-bottom: 10px; box-shadow: var(--shadow);
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  }
+  .reservation-title { font-size: 15px; font-weight: 700; margin: 0 0 4px; }
+  .reservation-meta { font-size: 12px; color: var(--text-light); }
+  .reservation-status { font-size: 12px; padding: 4px 10px; border-radius: 12px; font-weight: 600; flex: 0 0 auto; }
+  .reservation-status.confirmed { background: rgba(16,185,129,.12); color: var(--success); }
+  .reservation-status.purchased { background: rgba(37,99,235,.12); color: var(--primary); }
+
+  /* ---------- 航班横向卡片 ---------- */
+  .flight-rail {
+    display: flex; gap: 12px; overflow-x: auto;
+    scroll-snap-type: x mandatory; scroll-padding-left: 16px;
+    margin: 0 -16px; padding: 4px 16px 14px;
+    scrollbar-width: none;
+  }
+  .flight-rail::-webkit-scrollbar { display: none; }
+  .flight-card {
+    scroll-snap-align: start; flex: 0 0 86%; max-width: 380px;
+    background: var(--ink); color: #f8fafc;
+    border: 1px solid #1e293b; border-radius: 18px; padding: 18px;
+    display: flex; flex-direction: column; gap: 13px;
+    box-shadow: 0 10px 24px rgba(15,23,42,.18);
+  }
+  .fc-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .fc-index { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; letter-spacing: 1.4px; color: #64748b; }
+  .fc-airline { font-size: 12px; color: var(--ink-soft); text-align: right; }
+  .fc-title { font-size: 13px; color: #cbd5e1; margin-top: -7px; }
+
+  .fc-codes { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
+  .fc-code { text-align: center; min-width: 0; }
+  .fc-iata { font-size: 27px; font-weight: 800; letter-spacing: 1px; line-height: 1.15; }
+  .fc-codes.rt .fc-iata { font-size: 30px; }
+  .fc-city { font-size: 11px; color: var(--ink-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .fc-t { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; color: #e2e8f0; margin-top: 3px; white-space: nowrap; }
+  .fc-link { position: relative; flex: 1 1 auto; min-width: 20px; border-top: 1px dashed rgba(148,163,184,.45); }
+  .fc-link::after {
+    content: "\2708"; position: absolute; top: -9px; left: 50%; transform: translateX(-50%);
+    background: var(--ink); padding: 0 4px; color: var(--ink-accent); font-size: 11px;
+  }
+  .fc-link.rt::after { content: "\21C4"; font-size: 13px; }
+
+  .fc-legs { display: flex; flex-direction: column; gap: 6px; }
+  .fc-leg {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    font-size: 12px; color: #cbd5e1; background: rgba(148,163,184,.1);
+    padding: 8px 10px; border-radius: 8px;
+  }
+  .fc-leg .k { color: var(--ink-soft); font-size: 11px; flex: 0 0 auto; }
+  .fc-meta { font-size: 11.5px; color: var(--ink-soft); display: flex; flex-wrap: wrap; gap: 4px 12px; }
+  .fc-count {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    background: rgba(56,189,248,.12); border: 1px solid rgba(56,189,248,.25);
+    border-radius: 12px; padding: 10px 12px; font-size: 12px; color: #7dd3fc;
+  }
+  .fc-count .k { flex: 0 0 auto; }
+  .fc-count b { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 15px; color: var(--ink-accent); }
+
+  .rail-dots { display: flex; justify-content: center; gap: 6px; margin-top: 4px; }
+  .rail-dots span { width: 6px; height: 6px; border-radius: 3px; background: var(--border); transition: width .2s, background .2s; }
+  .rail-dots span.on { width: 18px; background: var(--primary); }
+  .rail-page { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; color: var(--text-light); }
+
+  /* ---------- 准备清单 ---------- */
+  .cl-progress { font-size: 12px; color: var(--text-light); flex: 0 0 auto; }
+  .cl-progress b { color: var(--primary); font-size: 13px; }
+  .cl-bar { height: 6px; border-radius: 3px; background: var(--border); overflow: hidden; margin-bottom: 14px; }
+  .cl-bar i { display: block; height: 100%; width: 0; background: var(--primary); transition: width .3s; }
+  .cl-add { display: flex; gap: 8px; margin-bottom: 14px; }
+  .cl-add select, .cl-add input {
+    border: 1px solid var(--border); border-radius: 10px; padding: 10px;
+    font-size: 13px; background: var(--card); color: var(--text); font-family: inherit;
+  }
+  .cl-add select { flex: 0 0 auto; max-width: 92px; }
+  .cl-add input { flex: 1; min-width: 0; }
+  .cl-add input::placeholder { color: #94a3b8; }
+  .checklist-category { background: var(--card); border-radius: var(--radius); padding: 14px; margin-bottom: 12px; box-shadow: var(--shadow); }
+  .checklist-title { font-size: 14px; font-weight: 700; margin: 0 0 8px; }
+  .checklist-item { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--border); }
+  .checklist-item:last-child { border-bottom: none; }
+  .checklist-item input[type=checkbox] { width: 20px; height: 20px; accent-color: var(--primary); flex-shrink: 0; }
+  .checklist-item span { font-size: 14px; flex: 1; min-width: 0; word-break: break-word; }
+  .checklist-item.done span { text-decoration: line-through; color: var(--text-light); }
+  .cl-del {
+    flex: 0 0 auto; border: none; background: transparent; color: #cbd5e1;
+    font-size: 17px; line-height: 1; padding: 5px 7px; cursor: pointer; border-radius: 8px;
+  }
+  .cl-del:hover { color: var(--danger); background: rgba(239,68,68,.08); }
+  .cl-foot { display: flex; justify-content: center; margin-top: 4px; }
+  .cl-reset { border: none; background: transparent; color: var(--text-light); font-size: 12px; text-decoration: underline; cursor: pointer; padding: 6px; }
+
+  /* ---------- 页脚 ---------- */
+  .footer { text-align: center; padding: 30px 0 10px; font-size: 12px; color: var(--text-light); }
+  .footer .warn { margin-top: 5px; color: #b45309; }
+
+  /* ---------- JSON 编辑器 ---------- */
+  .editor-trigger {
+    position: fixed; bottom: 20px; right: 20px; width: 48px; height: 48px;
+    border-radius: 50%; background: var(--text); color: white; border: none;
+    font-size: 20px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,.2); z-index: 200;
+  }
+  .editor-mask { display: none; position: fixed; inset: 0; background: rgba(15,23,42,.5); z-index: 300; }
+  .editor-mask.on { display: block; }
+  .editor-panel {
+    position: fixed; bottom: 0; left: 50%; transform: translate(-50%, 100%);
+    width: 100%; max-width: 480px; height: 80vh; background: var(--card);
+    border-radius: var(--radius) var(--radius) 0 0; z-index: 301;
+    display: flex; flex-direction: column; transition: transform .3s ease;
+  }
+  .editor-panel.on { transform: translate(-50%, 0); }
+  .editor-header { display: flex; justify-content: space-between; align-items: center; padding: 16px; border-bottom: 1px solid var(--border); }
+  .editor-title { font-size: 16px; font-weight: 700; margin: 0; }
+  .editor-body { flex: 1; padding: 12px 16px; overflow: hidden; display: flex; flex-direction: column; }
+  .editor-body textarea {
+    flex: 1; width: 100%; border: 1px solid var(--border); border-radius: var(--radius-sm);
+    padding: 12px; font-family: ui-monospace, "SF Mono", Monaco, monospace;
+    font-size: 12px; resize: none;
+  }
+  .editor-tip { font-size: 12px; color: var(--text-light); margin-top: 8px; }
+  .editor-footer { padding: 12px 16px; border-top: 1px solid var(--border); display: flex; gap: 10px; }
+  .editor-footer .btn { flex: 1; }
+
+  /* ---------- 底部弹窗 ---------- */
+  .sheet-mask {
+    position: fixed; inset: 0; background: rgba(15,23,42,.5);
+    opacity: 0; pointer-events: none; transition: opacity .25s; z-index: 400;
+  }
+  .sheet-mask.on { opacity: 1; pointer-events: auto; }
+  .sheet {
+    position: fixed; bottom: 0; left: 50%; transform: translate(-50%, 101%);
+    width: 100%; max-width: 480px; max-height: 84vh; z-index: 401;
+    background: var(--card); border-radius: 18px 18px 0 0;
+    display: flex; flex-direction: column;
+    transition: transform .3s cubic-bezier(.22,.8,.3,1);
+  }
+  .sheet.on { transform: translate(-50%, 0); }
+  .sheet-grab { width: 38px; height: 4px; border-radius: 2px; background: var(--border); margin: 10px auto 0; flex: 0 0 auto; }
+  .sheet-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 14px 18px 10px; border-bottom: 1px solid var(--border); }
+  .sheet-title { font-size: 17px; font-weight: 800; margin: 0; line-height: 1.35; }
+  .sheet-body { padding: 14px 18px; overflow-y: auto; }
+  .sheet-row { margin-bottom: 12px; }
+  .sheet-label { font-size: 11.5px; color: var(--text-light); margin-bottom: 2px; }
+  .sheet-value { font-size: 14.5px; word-break: break-word; }
+  .sheet-foot { display: flex; gap: 10px; padding: 12px 18px; border-top: 1px solid var(--border); }
+  .sheet-foot .btn { flex: 1; }
+  .sheet-foot .btn-primary { flex: 1.4; }
+
+  .hidden { display: none !important; }
+  .banner {
+    background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.25);
+    color: #b91c1c; border-radius: var(--radius-sm); padding: 12px 14px;
+    font-size: 13px; margin-top: 16px; line-height: 1.55;
+  }
+</style>
 </head>
 <body>
-  <div class="container">
-    <header class="header">
-      <h1 class="header-title">美国西岸之旅</h1>
-      <div class="header-meta">旧金山 · 洛杉矶 · 波特兰 · 9.24 - 10.7</div>
-    </header>
+<div class="container">
+  <header class="header">
+    <h1 class="header-title" id="app-title">美国西岸之旅</h1>
+    <div class="header-meta" id="app-meta">旧金山 · 洛杉矶 · 波特兰 · 9.24 - 10.7</div>
+  </header>
 
-    <!-- 此刻模块 -->
-    <section class="section" id="now-section">
-      <div class="now-card">
-        <div class="now-label">下一站 / Next Up</div>
-        <h2 class="now-place" id="now-place">加载中...</h2>
-        <div class="now-time" id="now-time">--</div>
-        <div class="now-actions">
-          <a href="#" class="btn btn-primary" id="now-nav">
-            <span>🧭</span> 怎么去
-          </a>
-          <button class="btn btn-secondary" id="now-refresh">
-            <span>↻</span> 刷新
-          </button>
-        </div>
-      </div>
-    </section>
+  <div id="load-error"></div>
 
-    <!-- 当日路线规划 -->
-    <section class="section" id="today-section">
-      <div class="route-header">
-        <h2 class="section-title"><span class="icon">📍</span> 今日路线</h2>
-        <button class="btn btn-outline btn-small" id="today-chain">
-          <span>🔗</span> 全部串联
-        </button>
+  <!-- 下一站 -->
+  <section class="section" id="next-section">
+    <div class="next-card">
+      <div class="nx-top">
+        <span class="nx-label" id="nx-label">下一站 / Next up</span>
+        <span class="nx-badge" id="nx-badge">—</span>
       </div>
-      <div class="route-list" id="today-list">
-        <div class="route-empty">加载中...</div>
+      <h2 class="nx-title" id="nx-title">加载中…</h2>
+      <div class="nx-line" id="nx-line"><span class="nx-cd">--</span></div>
+      <div class="nx-row" id="nx-addr-row"><span class="k">📍</span><span id="nx-addr">—</span></div>
+      <div class="nx-row" id="nx-note-row"><span class="k">📝</span><span id="nx-note">—</span></div>
+      <div class="nx-actions">
+        <a href="#" id="nx-nav" class="btn btn-primary" target="_blank" rel="noopener">🧭 怎么去</a>
+        <button id="nx-detail" class="btn btn-secondary">详情</button>
+        <button id="nx-refresh" class="btn btn-secondary">↻ 刷新</button>
       </div>
-    </section>
+      <div class="nx-up" id="nx-up"></div>
+    </div>
+  </section>
 
-    <!-- 每日行程总览 -->
-    <section class="section" id="daily-section">
-      <h2 class="section-title"><span class="icon">📅</span> 每日行程</h2>
+  <!-- 每日行程（原「今日路线」已并入） -->
+  <section class="section" id="daily-section">
+    <div class="daybar">
       <div class="days-scroll" id="days-scroll"></div>
-      <div class="day-detail" id="day-detail">
-        <div class="day-detail-header">
-          <h3 class="day-detail-title" id="day-detail-title">选择日期</h3>
-        </div>
-        <div class="day-accommodation" id="day-accommodation">--</div>
-        <div id="day-activities"></div>
-      </div>
-    </section>
+      <button class="btn btn-outline btn-small btn-chain" id="day-chain">🔗 全部串联</button>
+    </div>
+    <div class="day-detail">
+      <h3 class="day-detail-title" id="day-detail-title">选择日期</h3>
+      <div class="day-accommodation" id="day-accommodation">--</div>
+      <div class="tl" id="day-activities"></div>
+    </div>
+  </section>
 
-    <!-- 种草的打卡地 -->
-    <section class="section" id="hotspots-section">
-      <h2 class="section-title"><span class="icon">🌿</span> 种草的打卡地</h2>
-      <div class="hotspots-grid" id="hotspots-grid"></div>
-    </section>
+  <!-- 种草打卡地 -->
+  <section class="section" id="hotspots-section">
+    <h2 class="section-title"><span class="icon">🌿</span> 种草的打卡地</h2>
+    <div class="hotspots-grid" id="hotspots-grid"></div>
+  </section>
 
-    <!-- 预订与购票 -->
-    <section class="section" id="reservations-section">
-      <h2 class="section-title"><span class="icon">🎫</span> 预订与购票</h2>
-      <div id="reservations-list"></div>
-    </section>
+  <!-- 预订与购票 -->
+  <section class="section" id="reservations-section">
+    <h2 class="section-title"><span class="icon">🎫</span> 预订与购票</h2>
+    <div id="reservations-list"></div>
+  </section>
 
-    <!-- 航班行程 -->
-    <section class="section" id="flights-section">
+  <!-- 航班行程 -->
+  <section class="section" id="flights-section">
+    <div class="section-head">
       <h2 class="section-title"><span class="icon">✈️</span> 航班行程</h2>
-      <div id="flights-list"></div>
-    </section>
+      <span class="rail-page" id="rail-page">01 / 04</span>
+    </div>
+    <div class="flight-rail" id="flight-rail"></div>
+    <div class="rail-dots" id="flight-dots"></div>
+  </section>
 
-    <!-- 旅行准备清单 -->
-    <section class="section" id="checklist-section">
+  <!-- 旅行准备 -->
+  <section class="section" id="checklist-section">
+    <div class="section-head">
       <h2 class="section-title"><span class="icon">✅</span> 旅行准备</h2>
-      <div id="checklist-list"></div>
-    </section>
+      <span class="cl-progress" id="cl-progress">已完成 <b>0</b> / 0</span>
+    </div>
+    <div class="cl-bar"><i id="cl-bar-fill"></i></div>
+    <div class="cl-add">
+      <select id="cl-cat"></select>
+      <input id="cl-input" type="text" placeholder="添加新事项…" maxlength="40" />
+      <button class="btn btn-primary" id="cl-add-btn">添加</button>
+    </div>
+    <div id="checklist-list"></div>
+    <div class="cl-foot"><button class="cl-reset" id="cl-reset">恢复默认清单</button></div>
+  </section>
 
-    <footer class="footer">
-      <div>实时行程助手 · 数据来自 travel-data.json</div>
-      <div style="margin-top:4px;">请自行检查敏感信息，勿公开分享确认号/证件号</div>
-    </footer>
+  <footer class="footer">
+    <div>实时行程助手 · 数据来自 travel-data.json</div>
+    <div class="warn">请勿填写护照号 / 信用卡号 / 确认号 / 座位号 / 真实姓名全拼</div>
+  </footer>
+</div>
+
+<button class="editor-trigger" id="editor-trigger" title="编辑数据">⚙️</button>
+
+<div class="editor-mask" id="editor-mask"></div>
+<div class="editor-panel" id="editor-panel">
+  <div class="editor-header">
+    <h3 class="editor-title">编辑 travel-data.json</h3>
+    <button class="btn btn-outline btn-small" id="editor-close">关闭</button>
   </div>
-
-  <button class="editor-trigger" id="editor-trigger" title="编辑数据">⚙️</button>
-
-  <div class="editor-overlay" id="editor-overlay"></div>
-  <div class="editor-panel" id="editor-panel">
-    <div class="editor-header">
-      <h3 class="editor-title">编辑 travel-data.json</h3>
-      <button class="btn btn-outline btn-small" id="editor-close">关闭</button>
-    </div>
-    <div class="editor-body">
-      <textarea id="editor-textarea" spellcheck="false"></textarea>
-      <div class="editor-tip">修改后点「保存到本地」，替换 GitHub 上的 travel-data.json 即可生效。</div>
-    </div>
-    <div class="editor-footer">
-      <button class="btn btn-outline" id="editor-download">📥 下载 JSON</button>
-      <button class="btn btn-primary" id="editor-save">💾 保存到本地</button>
-    </div>
+  <div class="editor-body">
+    <textarea id="editor-textarea" spellcheck="false"></textarea>
+    <div class="editor-tip">改完点「保存到当前页面」立即生效；要更新线上版本，请下载 JSON 替换仓库里的文件。</div>
   </div>
-
-  <div class="modal-overlay" id="modal-overlay">
-    <div class="modal-content">
-      <h3 class="modal-title" id="modal-title">详情</h3>
-      <div id="modal-body"></div>
-      <div class="modal-actions">
-        <button class="btn btn-outline" id="modal-close">关闭</button>
-        <a href="#" class="btn btn-primary" id="modal-nav">导航</a>
-      </div>
-    </div>
+  <div class="editor-footer">
+    <button class="btn btn-outline" id="editor-download">📥 下载 JSON</button>
+    <button class="btn btn-primary" id="editor-save">💾 保存到当前页面</button>
   </div>
+</div>
 
-  <script>
-    // ===== 全局状态 =====
-    let appData = null;
-    let selectedDate = null;
-    const STORAGE_KEY = 'travelPlanState';
+<div class="sheet-mask" id="sheet-mask"></div>
+<div class="sheet" id="sheet">
+  <div class="sheet-grab"></div>
+  <div class="sheet-head">
+    <h3 class="sheet-title" id="sheet-title">详情</h3>
+    <button class="btn btn-outline btn-small" id="sheet-close">关闭</button>
+  </div>
+  <div class="sheet-body" id="sheet-body"></div>
+  <div class="sheet-foot">
+    <button class="btn btn-outline" id="sheet-cancel">返回</button>
+    <a href="#" class="btn btn-primary" id="sheet-nav" target="_blank" rel="noopener">🧭 导航</a>
+  </div>
+</div>
 
-    // ===== 工具函数 =====
-    function toDateStr(d) {
-      return new Date(d).toISOString().split('T')[0];
+<script>
+  // ===== 常量 =====
+  var DEFAULT_TRIP_TZ = 'America/Los_Angeles';
+  var CHECKLIST_KEY = 'uswest.checklist.v2';
+  var CHECKLIST_KEY_V1 = 'uswest.checklist.v1';
+  var DONE_ACTS_KEY = 'uswest.doneActs.v1';
+  var LEGACY_KEY = 'travelPlanState';
+
+  // 机场坐标：给航班行程点提供导航落点；可在 travel-data.json 的 airports 里覆盖
+  var AIRPORTS = {
+    PVG: [31.1443, 121.8083],
+    ICN: [37.4691, 126.4505],
+    SFO: [37.6213, -122.379],
+    BUR: [34.2007, -118.3585],
+    SJC: [37.3639, -121.9289],
+    PDX: [45.5898, -122.5951]
+  };
+
+  var TYPE_ICON = {
+    flight: '✈️', food: '🍽️', sight: '📸', cafe: '☕', hotel: '🏨',
+    event: '🎵', nightlife: '🌃', service: '💅', transfer: '🚗',
+    accommodation: '🛏️', other: '📝', reservation: '🎫'
+  };
+
+  // 只有「上午 / 下午」这类模糊时间时，按大致时段排序用。
+  // 「全天」不参与「下一站」推算——它是占位说明，不是具体安排。
+  var FUZZY_HOUR = {
+    凌晨: 5, 清晨: 6, 早上: 7, 上午: 9, 白天: 10, 中午: 12,
+    午后: 13, 下午: 14, 傍晚: 17, 黄昏: 18, 晚上: 19, 夜里: 21, 夜间: 21
+  };
+
+  // ===== 全局状态 =====
+  var appData = null;
+  var selectedDate = null;
+  var tripTz = DEFAULT_TRIP_TZ;
+  var points = [];
+  var nextTargetMs = Infinity;
+  var checklistData = null;
+  var doneActs = {};          // 已勾掉的行程点：key -> 1
+  var shownDoneDate = null;   // 当前这一天是否展开已收起的行程点
+
+  // ===== 工具 =====
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function typeIcon(t) { return TYPE_ICON[t] || '📍'; }
+  function pad2(n) { return String(n).padStart(2, '0'); }
+
+  // 部分内核没有 scrollIntoView 或吃不下 options，失败也不能影响后续渲染
+  function scrollWithin(el, opts) {
+    if (!el || typeof el.scrollIntoView !== 'function') return;
+    try { el.scrollIntoView(opts); } catch (e) { try { el.scrollIntoView(); } catch (e2) { /* 忽略 */ } }
+  }
+
+  // 解析行程点时间：精确保留 HH:MM，模糊时段给一个排序用的小时
+  function parseActivityTime(a) {
+    var t = a.time;
+    if (!t) return null;
+    if (/^\d{2}:\d{2}$/.test(t)) {
+      return { h: +t.slice(0, 2), m: +t.slice(3, 5), exact: true, label: t };
     }
-
-    function formatTime(iso) {
-      if (!iso) return '';
-      const d = new Date(iso);
-      return d.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', hour12: false });
+    if (FUZZY_HOUR[t] != null) {
+      return { h: FUZZY_HOUR[t], m: 0, exact: false, label: t };
     }
+    return null;
+  }
 
-    function getTypeIcon(type) {
-      const map = {
-        flight: '✈️',
-        food: '🍽️',
-        sight: '📸',
-        cafe: '☕',
-        hotel: '🏨',
-        event: '🎵',
-        nightlife: '🌃',
-        service: '💅',
-        transfer: '🚗',
-        accommodation: '🛏️',
-        other: '📝'
-      };
-      return map[type] || '📍';
+  // 某时刻在指定时区的偏移（毫秒），自动处理夏令时
+  function tzOffsetMs(ts, tz) {
+    var p = {};
+    new Intl.DateTimeFormat('en-US', {
+      timeZone: tz, hour12: false,
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit'
+    }).formatToParts(new Date(ts)).forEach(function (x) { p[x.type] = x.value; });
+    var asUTC = Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour % 24, +p.minute, +p.second);
+    return asUTC - Math.floor(ts / 1000) * 1000;
+  }
+
+  // 把「某时区的挂钟时间」还原成真实时间点
+  function zoned(dateStr, timeStr, tz) {
+    var d = dateStr.split('-').map(Number);
+    var t = timeStr.split(':').map(Number);
+    var guess = Date.UTC(d[0], d[1] - 1, d[2], t[0], t[1], 0);
+    return new Date(guess - tzOffsetMs(guess - tzOffsetMs(guess, tz), tz));
+  }
+
+  function partInTz(date, tz, opts) {
+    var p = {};
+    new Intl.DateTimeFormat('en-US', Object.assign({ timeZone: tz }, opts))
+      .formatToParts(date).forEach(function (x) { p[x.type] = x.value; });
+    return p;
+  }
+
+  function dateInTz(date, tz) {
+    var p = partInTz(date, tz, { year: 'numeric', month: '2-digit', day: '2-digit' });
+    return p.year + '-' + p.month + '-' + p.day;
+  }
+
+  function hhmmInTz(date, tz) {
+    var p = partInTz(date, tz, { hour: '2-digit', minute: '2-digit', hour12: false });
+    return (p.hour === '24' ? '00' : p.hour) + ':' + p.minute;
+  }
+
+  // 航班时间用的是带偏移的 ISO，直接取挂钟时间即可
+  function wallTime(iso) { var m = /T(\d{2}:\d{2})/.exec(iso || ''); return m ? m[1] : ''; }
+  function isoDay(iso) { return String(iso || '').slice(0, 10); }
+  function mdShort(iso) { return isoDay(iso).slice(5).replace('-', '/'); }
+  function mdLabel(iso) {
+    var s = isoDay(iso).split('-');
+    return s.length === 3 ? (+s[1]) + '月' + (+s[2]) + '日' : '';
+  }
+
+  function elapsedText(aIso, bIso) {
+    var mins = Math.round((new Date(bIso) - new Date(aIso)) / 60000);
+    if (!isFinite(mins) || mins <= 0) return '';
+    var h = Math.floor(mins / 60), m = mins % 60;
+    return h ? (h + 'h' + (m ? m + 'm' : '')) : (m + 'm');
+  }
+
+  function durationText(mins) {
+    if (mins < 60) return mins + ' 分钟';
+    var h = Math.floor(mins / 60), m = mins % 60;
+    return h + ' 小时' + (m ? ' ' + m + ' 分' : '');
+  }
+
+  function haversineKm(a, b) {
+    var R = 6371, rad = Math.PI / 180;
+    var dLat = (b.lat - a.lat) * rad, dLng = (b.lng - a.lng) * rad;
+    var s = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(a.lat * rad) * Math.cos(b.lat * rad) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    return 2 * R * Math.asin(Math.sqrt(s));
+  }
+
+  // 从 a 到 b 的交通方式和预估耗时
+  function legInfo(a, b) {
+    if (a.leg) return esc(a.leg);
+    if (a.type === 'flight' && b.type === 'flight') return '🔁 中转停留';
+    if (a.type === 'flight' || b.type === 'flight') return '✈️ 航班';
+    if (a.lat != null && a.lng != null && b.lat != null && b.lng != null) {
+      var km = haversineKm(a, b);
+      if (km < 1.2) return '🚶 步行约 ' + Math.max(2, Math.round(km * 13)) + ' 分钟';
+      return '🚗 驾车约 ' + durationText(Math.max(10, Math.round(km * 1.6)));
     }
+    return '🚗 驾车';
+  }
 
-    function openMaps(lat, lng, label) {
-      if (!lat || !lng) return '#';
-      const query = encodeURIComponent(label || '');
-      // Google Maps 优先，iOS 会提示选择 App
-      return `https://www.google.com/maps/search/?api=1&query=${lat},${lng}&query_place=${query}`;
+  function mapsUrl(lat, lng, label) {
+    if (lat == null || lng == null) return '#';
+    return 'https://www.google.com/maps/search/?api=1&query=' + lat + ',' + lng +
+      (label ? '&query_place=' + encodeURIComponent(label) : '');
+  }
+
+  function dirUrl(fromLat, fromLng, toLat, toLng, label) {
+    if (toLat == null || toLng == null) return '#';
+    if (fromLat != null && fromLng != null) {
+      return 'https://www.google.com/maps/dir/?api=1&origin=' + fromLat + ',' + fromLng +
+        '&destination=' + toLat + ',' + toLng + '&travelmode=driving';
     }
+    return mapsUrl(toLat, toLng, label);
+  }
 
-    function openDirections(fromLat, fromLng, toLat, toLng, label) {
-      if (!toLat || !toLng) return '#';
-      // 如果知道当前位置，用 dir；否则直接搜索目的地
-      if (fromLat && fromLng) {
-        return `https://www.google.com/maps/dir/?api=1&origin=${fromLat},${fromLng}&destination=${toLat},${toLng}&travelmode=driving`;
-      }
-      return openMaps(toLat, toLng, label);
-    }
+  function multiStopUrl(list) {
+    if (!list || list.length < 2) return '#';
+    var first = list[0], last = list[list.length - 1];
+    var url = 'https://www.google.com/maps/dir/?api=1&origin=' + first.lat + ',' + first.lng +
+      '&destination=' + last.lat + ',' + last.lng + '&travelmode=driving';
+    var mid = list.slice(1, -1).map(function (p) { return p.lat + ',' + p.lng; });
+    if (mid.length) url += '&waypoints=' + encodeURIComponent(mid.join('|'));
+    return url;
+  }
 
-    function openMultiStop(points) {
-      if (!points || points.length < 2) return '#';
-      const origin = `${points[0].lat},${points[0].lng}`;
-      const destination = `${points[points.length - 1].lat},${points[points.length - 1].lng}`;
-      const waypoints = points.slice(1, -1).map(p => `${p.lat},${p.lng}`).join('|');
-      let url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&travelmode=driving`;
-      if (waypoints) url += `&waypoints=${encodeURIComponent(waypoints)}`;
-      return url;
-    }
+  function originPoint() {
+    var c = (appData && appData.currentLocation) || {};
+    return (c.lat != null && c.lng != null) ? c : null;
+  }
 
-    function saveState() {
-      const state = {
-        checklist: {},
-        timestamp: Date.now()
-      };
-      document.querySelectorAll('.checklist-item input').forEach(cb => {
-        state.checklist[cb.dataset.id] = cb.checked;
-      });
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    }
+  function navHref(lat, lng, label) {
+    var o = originPoint();
+    return o ? dirUrl(o.lat, o.lng, lat, lng, label) : mapsUrl(lat, lng, label);
+  }
 
-    function loadState() {
-      try {
-        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || { checklist: {} };
-      } catch {
-        return { checklist: {} };
-      }
-    }
-
-    // ===== 加载数据 =====
-    async function loadData() {
-      const res = await fetch('travel-data.json?t=' + Date.now());
-      appData = await res.json();
-      renderAll();
-    }
-
-    // ===== 渲染此刻模块 =====
-    function renderNow() {
-      const now = new Date();
-      // 收集所有带时间的行程点
-      const allPoints = [];
-      appData.flights.forEach(f => {
-        f.segments.forEach(s => {
-          allPoints.push({
-            title: `${s.dep.code} → ${s.arr.code}`,
-            location: s.arr.city,
-            time: new Date(s.dep.time),
-            lat: s.dep.lat || null,
-            lng: s.dep.lng || null,
-            type: 'flight',
-            note: `${s.flight} ${s.airline}`
-          });
-        });
-      });
-      appData.daily.forEach(d => {
-        d.activities.forEach(a => {
-          if (a.time && a.time.match(/^\d{2}:\d{2}$/)) {
-            const t = new Date(`${d.date}T${a.time}:00-07:00`);
-            allPoints.push({
-              title: a.title,
-              location: a.location,
-              time: t,
-              lat: a.lat || null,
-              lng: a.lng || null,
-              type: a.type,
-              note: a.note
-            });
-          }
-        });
-      });
-      appData.reservations.forEach(r => {
-        if (r.time) {
-          const tz = r.date.startsWith('2026-10') ? '-07:00' : '-07:00';
-          allPoints.push({
-            title: r.title,
-            location: r.location,
-            time: new Date(`${r.date}T${r.time}:00${tz}`),
-            lat: r.lat || null,
-            lng: r.lng || null,
-            type: 'food',
-            note: r.note
+  // ===== 加载数据 =====
+  function loadData() {
+    return fetch('travel-data.json?t=' + Date.now())
+      .then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function (json) {
+        appData = json;
+        if (json.airports) {
+          Object.keys(json.airports).forEach(function (k) {
+            var v = json.airports[k];
+            if (Array.isArray(v) && v.length === 2) AIRPORTS[k] = v;
           });
         }
+        tripTz = (json.meta && json.meta.tripTimezone) || DEFAULT_TRIP_TZ;
+
+        var t = (json.meta && json.meta.title) || '行程助手';
+        document.getElementById('app-title').textContent = t;
+        document.title = t + ' · 实时行程助手';
+
+        var sub = [];
+        if (json.meta && json.meta.destination) sub.push(json.meta.destination);
+        var days = json.daily || [];
+        if (days.length) {
+          sub.push(mdShort(days[0].date) + ' - ' + mdShort(days[days.length - 1].date));
+        }
+        document.getElementById('app-meta').textContent = sub.join(' · ');
       });
+  }
 
-      // 找到下一个行程点
-      let next = allPoints.find(p => p.time > now);
-      if (!next) {
-        next = allPoints[allPoints.length - 1];
-      }
-      if (!next) return;
+  // ===== 行程点「已走过」标记（存 localStorage）=====
+  // 用「日期|原始时间|标题」当键，这样改 JSON 里的其他内容不会把勾选弄丢
+  function doneActKey(date, a) {
+    return date + '|' + (a.time || '') + '|' + (a.title || '');
+  }
 
-      const diffMs = next.time - now;
-      const diffH = Math.max(0, Math.floor(diffMs / 3600000));
-      const diffM = Math.max(0, Math.floor((diffMs % 3600000) / 60000));
-      const timeText = diffMs > 0
-        ? `预计 ${formatTime(next.time.toISOString())} · 还有 ${diffH}h ${diffM}m`
-        : `正在进行中 · ${formatTime(next.time.toISOString())}`;
+  function loadDoneActs() {
+    try {
+      var raw = JSON.parse(localStorage.getItem(DONE_ACTS_KEY) || '{}');
+      doneActs = (raw && typeof raw === 'object' && !Array.isArray(raw)) ? raw : {};
+    } catch (e) { doneActs = {}; }
+  }
 
-      document.getElementById('now-place').textContent = next.title;
-      document.getElementById('now-time').textContent = timeText;
+  function saveDoneActs() {
+    try { localStorage.setItem(DONE_ACTS_KEY, JSON.stringify(doneActs)); } catch (e) { /* 存储不可用 */ }
+  }
 
-      const navBtn = document.getElementById('now-nav');
-      navBtn.href = openDirections(
-        appData.currentLocation?.lat,
-        appData.currentLocation?.lng,
-        next.lat,
-        next.lng,
-        next.location
-      );
-      if (!next.lat || !next.lng) navBtn.classList.add('hidden');
-      else navBtn.classList.remove('hidden');
-    }
+  function isPointDone(p) { return !!(p && p.doneKey && doneActs[p.doneKey]); }
 
-    // ===== 渲染当日路线 =====
-    function renderTodayRoute() {
-      const now = new Date();
-      const todayStr = toDateStr(now.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
-      // 如果没有到旅行日期，显示出发日
-      const startStr = toDateStr(appData.daily[0].date);
-      const displayDate = todayStr < startStr ? startStr : todayStr;
+  // ===== 行程点（排序后用于「下一站」）=====
+  function buildPoints() {
+    var pts = [];
+    var seen = {};
 
-      const day = appData.daily.find(d => d.date === displayDate);
-      const container = document.getElementById('today-list');
+    (appData.daily || []).forEach(function (day) {
+      var prevMs = null;
+      (day.activities || []).forEach(function (a) {
+        var pt = parseActivityTime(a);
+        if (!pt) return;
+        var ms = zoned(day.date, pad2(pt.h) + ':' + pad2(pt.m), a.tz || tripTz).getTime();
+        // 模糊时段只是排序锚点，不能让「下午」跑到同一天更晚的明确时间前面。
+        // 这里保证同一天内顺序与 JSON 里手写的先后一致。
+        if (prevMs != null && ms < prevMs) ms = prevMs;
+        prevMs = ms;
 
-      if (!day || !day.activities.length) {
-        container.innerHTML = '<div class="route-empty">今日暂无行程</div>';
-        return;
-      }
-
-      const activities = day.activities.filter(a => a.lat && a.lng);
-      document.getElementById('today-chain').onclick = () => {
-        if (activities.length >= 2) window.open(openMultiStop(activities), '_blank');
-      };
-      document.getElementById('today-chain').style.display = activities.length >= 2 ? 'inline-flex' : 'none';
-
-      container.innerHTML = day.activities.map((a, i) => {
-        const next = day.activities[i + 1];
-        const transport = next ? `<div class="route-transport">🚗 约 ${estimateDuration(a, next)}</div>` : '';
-        return `
-          <div class="route-item">
-            <div class="route-dot ${a.type}"></div>
-            ${transport}
-            <div class="route-content">
-              <div class="route-time">${a.time || '全天'}</div>
-              <div class="route-title">${getTypeIcon(a.type)} ${a.title}</div>
-              <div class="route-location">📍 ${a.location}</div>
-              ${a.note ? `<div class="route-note">${a.note}</div>` : ''}
-              <div class="route-actions">
-                <button class="btn btn-outline btn-small" onclick="openDetail('${day.date}', ${i})">详情</button>
-                <a href="${openDirections(appData.currentLocation?.lat, appData.currentLocation?.lng, a.lat, a.lng, a.location)}" class="btn btn-primary btn-small ${!a.lat || !a.lng ? 'hidden' : ''}" target="_blank">导航</a>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function estimateDuration(a, b) {
-      // 简单估算：根据坐标距离，或默认 30 分钟
-      if (a.lat && a.lng && b.lat && b.lng) {
-        const R = 6371;
-        const dLat = (b.lat - a.lat) * Math.PI / 180;
-        const dLng = (b.lng - a.lng) * Math.PI / 180;
-        const haversine = Math.sin(dLat/2)**2 + Math.cos(a.lat * Math.PI/180) * Math.cos(b.lat * Math.PI/180) * Math.sin(dLng/2)**2;
-        const dist = 2 * R * Math.asin(Math.sqrt(haversine));
-        const mins = Math.max(15, Math.round(dist * 1.5)); // 开车约 1.5 分钟/公里
-        return mins < 60 ? `${mins} min` : `${Math.round(mins/60)}h ${mins%60}m`;
-      }
-      return '30 min';
-    }
-
-    window.openDetail = function(date, index) {
-      const day = appData.daily.find(d => d.date === date);
-      const a = day.activities[index];
-      if (!a) return;
-      document.getElementById('modal-title').textContent = a.title;
-      document.getElementById('modal-body').innerHTML = `
-        <div class="modal-row"><div class="modal-label">时间</div><div class="modal-value">${a.time || '全天'}</div></div>
-        <div class="modal-row"><div class="modal-label">地点</div><div class="modal-value">${a.location}</div></div>
-        <div class="modal-row"><div class="modal-label">备注</div><div class="modal-value">${a.note || '无'}</div></div>
-      `;
-      const nav = document.getElementById('modal-nav');
-      nav.href = openDirections(appData.currentLocation?.lat, appData.currentLocation?.lng, a.lat, a.lng, a.location);
-      nav.classList.toggle('hidden', !a.lat || !a.lng);
-      document.getElementById('modal-overlay').classList.add('open');
-    };
-
-    // ===== 渲染每日行程 =====
-    function renderDaily() {
-      const scroll = document.getElementById('days-scroll');
-      const nowStr = toDateStr(new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
-      const startStr = toDateStr(appData.daily[0].date);
-      selectedDate = nowStr < startStr ? appData.daily[0].date : nowStr;
-      if (!appData.daily.find(d => d.date === selectedDate)) {
-        selectedDate = appData.daily[0].date;
-      }
-
-      scroll.innerHTML = appData.daily.map(d => `
-        <div class="day-chip ${d.date === selectedDate ? 'active' : ''}" data-date="${d.date}">
-          <div class="day-date">${d.date.slice(5)}</div>
-          <div class="day-week">${d.weekday}</div>
-        </div>
-      `).join('');
-
-      scroll.querySelectorAll('.day-chip').forEach(chip => {
-        chip.addEventListener('click', () => {
-          selectedDate = chip.dataset.date;
-          scroll.querySelectorAll('.day-chip').forEach(c => c.classList.remove('active'));
-          chip.classList.add('active');
-          renderDayDetail();
+        seen[day.date + '|' + pt.label + '|' + a.title] = true;
+        pts.push({
+          time: new Date(ms),
+          exact: pt.exact,
+          timeLabel: pt.label,
+          doneKey: doneActKey(day.date, a),
+          date: day.date,
+          weekday: day.weekday || '',
+          title: a.title,
+          type: a.type,
+          location: a.location || '',
+          address: a.address || a.location || '',
+          note: a.note || '',
+          lat: a.lat != null ? a.lat : null,
+          lng: a.lng != null ? a.lng : null
         });
       });
+    });
 
+    (appData.reservations || []).forEach(function (r) {
+      if (!r.time) return;
+      // 已在「每日行程」里出现过的预约不再重复列出
+      if (seen[r.date + '|' + r.time + '|' + r.title]) return;
+      pts.push({
+        time: zoned(r.date, r.time, tripTz),
+        exact: true,
+        timeLabel: r.time,
+        date: r.date,
+        weekday: '',
+        title: r.title,
+        type: 'reservation',
+        location: r.location || '',
+        address: r.location || '',
+        note: r.note || '',
+        lat: r.lat != null ? r.lat : null,
+        lng: r.lng != null ? r.lng : null
+      });
+    });
+
+    pts.sort(function (a, b) { return a.time - b.time; });
+    return pts;
+  }
+
+  function countdownParts(ms) {
+    var d = Math.max(0, ms);
+    return {
+      days: Math.floor(d / 86400000),
+      hh: pad2(Math.floor(d % 86400000 / 3600000)),
+      mm: pad2(Math.floor(d % 3600000 / 60000)),
+      ss: pad2(Math.floor(d % 60000 / 1000))
+    };
+  }
+
+  // ===== 下一站 =====
+  function renderNext() {
+    if (!points.length) return;
+    var now = Date.now();
+
+    // 勾掉的行程点 = 已经走过，不再参与「下一站」推算
+    var active = points.filter(function (p) { return !isPointDone(p); });
+    if (!active.length) active = points;   // 全部勾掉时退回显示最后一项
+
+    var idx = -1;
+    for (var i = 0; i < active.length; i++) {
+      if (active[i].time.getTime() > now) { idx = i; break; }
+    }
+
+    var ended = idx < 0;
+    var p = ended ? active[active.length - 1] : active[idx];
+    nextTargetMs = ended ? Infinity : p.time.getTime();
+
+    document.getElementById('nx-label').textContent = ended ? '旅程已结束 / Trip ended' : '下一站 / Next up';
+
+    var badge = document.getElementById('nx-badge');
+    badge.textContent = typeIcon(p.type) + ' ' + (p.date ? mdShort(p.date) : '');
+    badge.className = 'nx-badge' + (ended ? ' ended' : '');
+
+    document.getElementById('nx-title').textContent = p.title;
+
+    var line = document.getElementById('nx-line');
+    var cd = document.createElement('span');
+    cd.id = 'nx-cd';
+    cd.className = 'nx-cd';
+    line.innerHTML = '';
+    if (p.exact) {
+      cd.dataset.target = String(p.time.getTime());
+      cd.dataset.live = 'next';
+      cd.textContent = '--';
+    } else {
+      // 只写了「上午 / 下午 / 晚上」的时刻：只显示时段本身，不推算钟点、不挂倒计时
+      cd.classList.add('nx-cd-soft');
+      cd.textContent = p.timeLabel;
+    }
+    line.appendChild(cd);
+    if (p.weekday) {
+      var wd = document.createElement('span');
+      wd.textContent = p.weekday + (p.exact ? ' ' + p.timeLabel : '');
+      line.appendChild(wd);
+    }
+
+    document.getElementById('nx-addr').textContent = p.address || '';
+    document.getElementById('nx-addr-row').classList.toggle('hidden', !p.address);
+    document.getElementById('nx-note').textContent = p.note || '';
+    document.getElementById('nx-note-row').classList.toggle('hidden', !p.note);
+
+    var nav = document.getElementById('nx-nav');
+    var hasGeo = p.lat != null && p.lng != null;
+    nav.href = hasGeo ? navHref(p.lat, p.lng, p.location || p.title) : '#';
+    nav.classList.toggle('hidden', !hasGeo);
+    document.getElementById('nx-detail').onclick = function () { openPointSheet(p); };
+
+    var upcoming = ended ? [] : active.slice(idx + 1, idx + 4);
+    document.getElementById('nx-up').innerHTML = upcoming.length
+      ? '<div class="nx-up-label">接下来</div>' + upcoming.map(function (u) {
+          return '<div class="nx-up-row">' +
+            '<span class="nx-up-time">' + esc(mdShort(u.date)) + ' ' + esc(u.timeLabel) + '</span>' +
+            '<span class="nx-up-name">' + typeIcon(u.type) + ' ' + esc(u.title) + '</span>' +
+          '</div>';
+        }).join('')
+      : '';
+
+    tickCountdowns();
+  }
+
+  // ===== 每秒 tick =====
+  function tickCountdowns() {
+    var now = Date.now();
+
+    document.querySelectorAll('[data-target]').forEach(function (el) {
+      var t = +el.dataset.target;
+      if (!isFinite(t)) return;
+      var diff = t - now;
+      var cd = countdownParts(diff);
+
+      if (el.dataset.live === 'flight') {
+        var end = +el.dataset.end;
+        var label = el.closest('.fc-count') ? el.closest('.fc-count').querySelector('.k') : null;
+        if (diff > 0) {
+          el.textContent = cd.days + '天 ' + cd.hh + ':' + cd.mm + ':' + cd.ss;
+          if (label) label.textContent = '距离起飞还剩';
+        } else if (end && now < end) {
+          el.textContent = '飞行中';
+          if (label) label.textContent = '当前状态';
+        } else {
+          el.textContent = '已完成';
+          if (label) label.textContent = '当前状态';
+        }
+      } else {
+        el.textContent = diff > 0
+          ? ('还有 ' + cd.days + '天 ' + cd.hh + ':' + cd.mm + ':' + cd.ss)
+          : '进行中';
+      }
+    });
+
+    // 到点后自动推进到下一个行程点
+    if (nextTargetMs !== Infinity && now > nextTargetMs) {
+      nextTargetMs = Infinity;
+      renderNext();
       renderDayDetail();
     }
+  }
 
-    function renderDayDetail() {
-      const day = appData.daily.find(d => d.date === selectedDate);
-      if (!day) return;
+  // ===== 日期条 + 当天行程 =====
+  function pickDefaultDate() {
+    var days = appData.daily || [];
+    if (!days.length) return null;
+    var today = dateInTz(new Date(), tripTz);
+    var start = days[0].date, end = days[days.length - 1].date;
+    if (today < start) return start;
+    if (today > end) return end;
+    return days.some(function (d) { return d.date === today; }) ? today : start;
+  }
 
-      document.getElementById('day-detail-title').textContent = `${day.date} ${day.weekday} · ${day.city}`;
-      document.getElementById('day-accommodation').innerHTML = `🏨 今晚住：${day.accommodation || '待补充'}`;
+  function renderDays() {
+    var scroll = document.getElementById('days-scroll');
+    selectedDate = pickDefaultDate();
+    scroll.innerHTML = (appData.daily || []).map(function (d) {
+      return '<div class="day-chip' + (d.date === selectedDate ? ' active' : '') + '" data-date="' + esc(d.date) + '">' +
+        '<div class="day-date">' + esc(d.date.slice(5).replace('-', '/')) + '</div>' +
+        '<div class="day-week">' + esc(d.weekday || '') + '</div>' +
+      '</div>';
+    }).join('');
 
-      document.getElementById('day-activities').innerHTML = day.activities.map((a, i) => {
-        const status = a.type === 'flight' ? '<span class="day-activity-status">已搞定</span>' : '';
-        return `
-          <div class="day-activity" onclick="openDetail('${day.date}', ${i})">
-            <div class="day-activity-time">${a.time || '全天'}</div>
-            <div class="day-activity-main">
-              <div class="day-activity-title">${getTypeIcon(a.type)} ${a.title}${status}</div>
-              <div class="day-activity-note">${a.location}${a.note ? ' · ' + a.note : ''}</div>
-            </div>
-          </div>
-        `;
-      }).join('');
+    scroll.querySelectorAll('.day-chip').forEach(function (chip) {
+      chip.addEventListener('click', function () {
+        selectedDate = chip.dataset.date;
+        scroll.querySelectorAll('.day-chip').forEach(function (c) { c.classList.remove('active'); });
+        chip.classList.add('active');
+        renderDayDetail();
+        scrollWithin(chip, { inline: 'center', block: 'nearest', behavior: 'smooth' });
+      });
+    });
+
+    var active = scroll.querySelector('.day-chip.active');
+    if (active) scrollWithin(active, { inline: 'center', block: 'nearest' });
+  }
+
+  function checkBtn(i, done) {
+    return '<button type="button" class="tl-check' + (done ? ' on' : '') + '" data-check="' + i + '"' +
+      ' title="' + (done ? '取消标记' : '标记为已走过，从列表和「下一站」中隐藏') + '">✓</button>';
+  }
+
+  function renderDayDetail() {
+    var day = (appData.daily || []).find(function (d) { return d.date === selectedDate; });
+    if (!day) return;
+
+    var isToday = dateInTz(new Date(), tripTz) === day.date;
+    document.getElementById('day-detail-title').textContent =
+      day.date + ' ' + (day.weekday || '') + ' · ' + (day.city || '') + (isToday ? '（今天）' : '');
+    document.getElementById('day-accommodation').textContent = '🏨 今晚住：' + (day.accommodation || '待补充');
+
+    var acts = day.activities || [];
+    var box = document.getElementById('day-activities');
+    var chainBtn = document.getElementById('day-chain');
+
+    if (!acts.length) {
+      box.innerHTML = '<div class="route-empty">当日暂无行程</div>';
+      chainBtn.style.display = 'none';
+      chainBtn.onclick = null;
+      return;
     }
 
-    // ===== 渲染打卡地 =====
-    function renderHotspots() {
-      const grid = document.getElementById('hotspots-grid');
-      if (!appData.hotspots.length) {
-        grid.innerHTML = '<div style="grid-column:1/-1;color:var(--text-light);font-size:13px;">暂无内容，稍后补充</div>';
-        return;
+    var doneFlags = acts.map(function (a) { return !!doneActs[doneActKey(day.date, a)]; });
+    var doneCount = doneFlags.filter(Boolean).length;
+    var expand = shownDoneDate === day.date;
+    // 勾掉 = 已经走过，默认从当天列表收起
+    var show = acts.map(function (a, i) { return (expand || !doneFlags[i]) ? i : -1; })
+      .filter(function (i) { return i >= 0; });
+
+    var geo = show.map(function (i) { return acts[i]; })
+      .filter(function (a) { return a.lat != null && a.lng != null; });
+    chainBtn.style.display = geo.length >= 2 ? 'inline-flex' : 'none';
+    chainBtn.onclick = geo.length >= 2
+      ? function () { window.open(multiStopUrl(geo), '_blank', 'noopener'); }
+      : null;
+
+    var listHtml = show.map(function (i, j) {
+      var a = acts[i];
+      var done = doneFlags[i];
+      var compact = a.type === 'flight';
+      var hasGeo = a.lat != null && a.lng != null;
+
+      // 航班类：压成一行，备注和按钮收进详情弹窗
+      var body = compact
+        ? '<div class="tl-body" data-act="' + i + '">' +
+            '<span class="tl-time">' + esc(a.time || '全天') + '</span>' +
+            '<span class="tl-title">' + typeIcon(a.type) + ' ' + esc(a.title) + '</span>' +
+            (a.location ? '<span class="tl-loc">· ' + esc(a.location) + '</span>' : '') +
+          '</div>'
+        : '<div class="tl-body" data-act="' + i + '">' +
+            '<div class="tl-time">' + esc(a.time || '全天') + '</div>' +
+            '<div class="tl-title">' + typeIcon(a.type) + ' ' + esc(a.title) + '</div>' +
+            '<div class="tl-loc">📍 ' + esc(a.location || '') + '</div>' +
+            (a.note ? '<div class="tl-note">' + esc(a.note) + '</div>' : '') +
+            '<div class="tl-actions">' +
+              '<button class="btn btn-outline" data-detail="' + i + '">详情</button>' +
+              (hasGeo
+                ? '<a class="btn btn-primary" href="' + navHref(a.lat, a.lng, a.location) + '" target="_blank" rel="noopener">导航</a>'
+                : '') +
+            '</div>' +
+          '</div>';
+
+      // 只有原本相邻的两点之间才画交通标注，避免收起后跨城乱估算
+      var leg = (show[j + 1] === i + 1) ? '<div class="tl-leg">' + legInfo(a, acts[i + 1]) + '</div>' : '';
+
+      return '<div class="tl-item' + (compact ? ' compact' : '') + (done ? ' is-done' : '') + '">' +
+        '<span class="tl-dot ' + esc(a.type || '') + '"></span>' +
+        checkBtn(i, done) +
+        body + leg +
+      '</div>';
+    }).join('');
+
+    if (!listHtml) listHtml = '<div class="route-empty">当天行程都已走过</div>';
+
+    if (doneCount) {
+      listHtml += '<div class="tl-done-summary">' +
+        '<button type="button" class="tl-done-btn" data-toggle-done>' +
+          (expand ? '收起已走过的 ' + doneCount + ' 项' : '已收起 ' + doneCount + ' 项 · 点击展开') +
+        '</button></div>';
+    }
+
+    box.innerHTML = listHtml;
+    bindDayEvents(box, day, acts);
+  }
+
+  function bindDayEvents(box, day, acts) {
+    box.querySelectorAll('[data-check]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var k = doneActKey(day.date, acts[+btn.dataset.check]);
+        if (doneActs[k]) delete doneActs[k]; else doneActs[k] = 1;
+        saveDoneActs();
+        renderNext();
+        renderDayDetail();
+      });
+    });
+
+    var toggle = box.querySelector('[data-toggle-done]');
+    if (toggle) {
+      toggle.addEventListener('click', function () {
+        shownDoneDate = (shownDoneDate === day.date) ? null : day.date;
+        renderDayDetail();
+      });
+    }
+
+    box.querySelectorAll('[data-detail]').forEach(function (el) {
+      el.addEventListener('click', function (e) {
+        e.stopPropagation();
+        openActivitySheet(day, acts[+el.dataset.detail]);
+      });
+    });
+
+    box.querySelectorAll('.tl-body').forEach(function (el) {
+      el.addEventListener('click', function (e) {
+        if (e.target.closest('a') || e.target.closest('button')) return;
+        openActivitySheet(day, acts[+el.dataset.act]);
+      });
+    });
+  }
+
+  // ===== 打卡地 =====
+  function renderHotspots() {
+    var grid = document.getElementById('hotspots-grid');
+    var list = appData.hotspots || [];
+    if (!list.length) {
+      grid.innerHTML = '<div style="grid-column:1/-1;color:var(--text-light);font-size:13px;">暂无内容，稍后补充</div>';
+      return;
+    }
+    grid.innerHTML = list.map(function (h) {
+      return '<div class="hotspot-card" data-hs="' + esc(h.id) + '">' +
+        '<h4 class="hotspot-name">' + esc(h.name) + '</h4>' +
+        '<p class="hotspot-desc">' + esc(h.description) + '</p>' +
+        '<div class="hotspot-tags">' +
+          '<span class="tag ' + (h.source === '小红书' ? 'source-xhs' : '') + '">' + esc(h.source) + '</span>' +
+          '<span class="tag ' + (h.addedToPlan ? 'added' : '') + '">' + (h.addedToPlan ? '已加入' : '可选') + '</span>' +
+          (h.needBooking ? '<span class="tag">需预约</span>' : '') +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    grid.querySelectorAll('[data-hs]').forEach(function (el) {
+      el.addEventListener('click', function () { openHotspotSheet(el.dataset.hs); });
+    });
+  }
+
+  // ===== 预订 =====
+  function renderReservations() {
+    document.getElementById('reservations-list').innerHTML = (appData.reservations || []).map(function (r) {
+      return '<div class="reservation-card">' +
+        '<div class="reservation-main">' +
+          '<div class="reservation-title">' + esc(r.title) + '</div>' +
+          '<div class="reservation-meta">' + esc(r.date) + ' ' + esc(r.time || '') +
+            ' · ' + esc(r.location || '') + (r.note ? ' · ' + esc(r.note) : '') + '</div>' +
+        '</div>' +
+        '<span class="reservation-status ' + esc(r.status) + '">' +
+          (r.status === 'confirmed' ? '已预约' : '已购票') + '</span>' +
+      '</div>';
+    }).join('');
+  }
+
+  // ===== 航班横向卡片 =====
+  function codeCol(code, city, timeText) {
+    return '<div class="fc-code">' +
+      '<div class="fc-iata">' + esc(code) + '</div>' +
+      '<div class="fc-city">' + esc(city || '') + '</div>' +
+      (timeText ? '<div class="fc-t">' + esc(timeText) + '</div>' : '') +
+    '</div>';
+  }
+
+  function updateRailPage(i, total) {
+    var el = document.getElementById('rail-page');
+    if (el) el.textContent = pad2(i + 1) + ' / ' + pad2(total);
+  }
+
+  function renderFlights() {
+    var rail = document.getElementById('flight-rail');
+    var dots = document.getElementById('flight-dots');
+    var flights = appData.flights || [];
+    var total = flights.length;
+    rail.dataset.total = String(total);
+
+    if (!total) { rail.innerHTML = ''; dots.innerHTML = ''; return; }
+
+    rail.innerHTML = flights.map(function (f, idx) {
+      var segs = f.segments || [];
+      if (!segs.length) return '';
+
+      var isRoundTrip = segs.length === 2 &&
+        segs[1].arr.code === segs[0].dep.code &&
+        segs[1].arr.city === segs[0].dep.city;
+
+      var airlines = [];
+      segs.forEach(function (s) { if (s.airline && airlines.indexOf(s.airline) < 0) airlines.push(s.airline); });
+      var airlineText = airlines.length ? airlines.join(' / ')
+        : (f.type === 'domestic' ? '美国国内航班' : '国际航班');
+
+      var titleText = f.title || (segs[0].dep.city + ' → ' + segs[segs.length - 1].arr.city);
+
+      var codesHtml = '';
+      if (isRoundTrip) {
+        codesHtml = '<div class="fc-codes rt">' +
+          codeCol(segs[0].dep.code, segs[0].dep.city, wallTime(segs[0].dep.time)) +
+          '<div class="fc-link rt"></div>' +
+          codeCol(segs[0].arr.code, segs[0].arr.city, wallTime(segs[0].arr.time)) +
+        '</div>';
+      } else {
+        var hops = [segs[0].dep].concat(segs.map(function (s) { return s.arr; }));
+        codesHtml = '<div class="fc-codes">' + hops.map(function (h, i) {
+          var times = [];
+          if (i > 0) times.push(wallTime(segs[i - 1].arr.time));
+          if (i < segs.length) times.push(wallTime(segs[i].dep.time));
+          return (i ? '<div class="fc-link"></div>' : '') + codeCol(h.code, h.city, times.join(' / '));
+        }).join('') + '</div>';
       }
-      grid.innerHTML = appData.hotspots.map(h => `
-        <div class="hotspot-card" onclick="openHotspot('${h.id}')">
-          <h4 class="hotspot-name">${h.name}</h4>
-          <p class="hotspot-desc">${h.description}</p>
-          <div class="hotspot-tags">
-            <span class="tag ${h.source === '小红书' ? 'source-xhs' : ''}">${h.source}</span>
-            <span class="tag ${h.addedToPlan ? 'added' : ''}">${h.addedToPlan ? '已加入' : '可选'}</span>
-            ${h.needBooking ? '<span class="tag">需预约</span>' : ''}
-          </div>
-        </div>
-      `).join('');
-    }
 
-    window.openHotspot = function(id) {
-      const h = appData.hotspots.find(x => x.id === id);
-      if (!h) return;
-      document.getElementById('modal-title').textContent = h.name;
-      document.getElementById('modal-body').innerHTML = `
-        <div class="modal-row"><div class="modal-label">一句话</div><div class="modal-value">${h.description}</div></div>
-        <div class="modal-row"><div class="modal-label">地址</div><div class="modal-value">${h.address || '待补充'}</div></div>
-        <div class="modal-row"><div class="modal-label">最佳时间</div><div class="modal-value">${h.bestTime || '待补充'}</div></div>
-        <div class="modal-row"><div class="modal-label">来源</div><div class="modal-value">${h.source}${h.sourceUrl ? ' · <a href="' + h.sourceUrl + '" target="_blank">查看</a>' : ''}</div></div>
-        <div class="modal-row"><div class="modal-label">行程状态</div><div class="modal-value">${h.addedToPlan ? '已加入行程' : '可选'}</div></div>
-      `;
-      const nav = document.getElementById('modal-nav');
-      nav.href = openDirections(appData.currentLocation?.lat, appData.currentLocation?.lng, h.lat, h.lng, h.name);
-      nav.classList.toggle('hidden', !h.lat || !h.lng);
-      document.getElementById('modal-overlay').classList.add('open');
-    };
-
-    // ===== 渲染预订 =====
-    function renderReservations() {
-      const list = document.getElementById('reservations-list');
-      list.innerHTML = appData.reservations.map(r => `
-        <div class="reservation-card">
-          <div class="reservation-main">
-            <div class="reservation-title">${r.title}</div>
-            <div class="reservation-meta">${r.date} ${r.time || ''} · ${r.location}${r.note ? ' · ' + r.note : ''}</div>
-          </div>
-          <span class="reservation-status ${r.status}">${r.status === 'confirmed' ? '已预约' : '已购票'}</span>
-        </div>
-      `).join('');
-    }
-
-    // ===== 渲染航班 =====
-    function renderFlights() {
-      const list = document.getElementById('flights-list');
-      list.innerHTML = appData.flights.map(f => {
-        const isReturn = f.direction === 'return';
-        const typeLabel = f.type === 'international' ? (isReturn ? '国际返程' : '国际去程') : '美国国内';
-        const typeClass = isReturn ? 'return' : '';
-        const segmentsHtml = f.segments.map(s => `
-          <div class="flight-segment">
-            <div class="flight-airport">
-              <div class="flight-code">${s.dep.code}</div>
-              <div class="flight-time">${formatTime(s.dep.time)}</div>
-            </div>
-            <div class="flight-line">
-              <div class="flight-duration">${s.duration}</div>
-            </div>
-            <div class="flight-airport">
-              <div class="flight-code">${s.arr.code}</div>
-              <div class="flight-time">${formatTime(s.arr.time)}</div>
-            </div>
-          </div>
-          <div class="flight-info">${s.airline} ${s.flight} ${s.plane ? '· ' + s.plane : ''}</div>
-        `).join('');
-        const transferHtml = f.transfer ? `
-          <div class="flight-transfer">
-            ✈️ ${f.transfer.city} 中转 ${f.transfer.duration} · ${f.transfer.note}
-          </div>
-        ` : '';
-        return `
-          <div class="flight-card">
-            <div class="flight-header">
-              <span class="flight-type ${typeClass}">${typeLabel}</span>
-              <span class="flight-date">${f.date}</span>
-            </div>
-            ${segmentsHtml}
-            ${transferHtml}
-          </div>
-        `;
-      }).join('');
-    }
-
-    // ===== 渲染清单 =====
-    function renderChecklist() {
-      const state = loadState();
-      const list = document.getElementById('checklist-list');
-      list.innerHTML = appData.checklist.map(cat => `
-        <div class="checklist-category">
-          <h4 class="checklist-title">${cat.category}</h4>
-          ${cat.items.map(item => `
-            <label class="checklist-item ${state.checklist[item.id] ? 'done' : ''}">
-              <input type="checkbox" data-id="${item.id}" ${state.checklist[item.id] ? 'checked' : ''}>
-              <span>${item.text}</span>
-            </label>
-          `).join('')}
-        </div>
-      `).join('');
-
-      list.querySelectorAll('input').forEach(cb => {
-        cb.addEventListener('change', () => {
-          cb.closest('.checklist-item').classList.toggle('done', cb.checked);
-          saveState();
-        });
-      });
-    }
-
-    // ===== 编辑器 =====
-    function initEditor() {
-      const overlay = document.getElementById('editor-overlay');
-      const panel = document.getElementById('editor-panel');
-      const textarea = document.getElementById('editor-textarea');
-
-      document.getElementById('editor-trigger').addEventListener('click', () => {
-        textarea.value = JSON.stringify(appData, null, 2);
-        overlay.classList.add('open');
-        panel.classList.add('open');
-      });
-
-      function close() {
-        overlay.classList.remove('open');
-        panel.classList.remove('open');
+      var legsHtml = '';
+      if (isRoundTrip) {
+        legsHtml = '<div class="fc-legs">' + segs.map(function (s, i) {
+          return '<div class="fc-leg">' +
+            '<span class="k">' + (i === 0 ? '去程' : '返程') + ' ' + esc(mdShort(s.dep.time)) + '</span>' +
+            '<span>' + esc(s.dep.code) + ' ' + esc(wallTime(s.dep.time)) + ' → ' +
+              esc(s.arr.code) + ' ' + esc(wallTime(s.arr.time)) + '</span>' +
+          '</div>';
+        }).join('') + '</div>';
       }
 
-      document.getElementById('editor-close').addEventListener('click', close);
-      overlay.addEventListener('click', close);
+      var meta = [mdLabel(segs[0].dep.time), isRoundTrip ? '往返 2 段' : segs.length + ' 段'];
+      var span = elapsedText(segs[0].dep.time, segs[segs.length - 1].arr.time);
+      if (!isRoundTrip && span) meta.push('全程 ' + span);
+      if (f.transfer) meta.push('中转 ' + f.transfer.city + ' ' + f.transfer.duration);
 
-      document.getElementById('editor-download').addEventListener('click', () => {
-        const blob = new Blob([textarea.value], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'travel-data.json';
-        a.click();
-        URL.revokeObjectURL(url);
-      });
+      var startIso = segs[0].dep.time;
+      var endIso = segs[segs.length - 1].arr.time;
 
-      document.getElementById('editor-save').addEventListener('click', () => {
-        try {
-          const newData = JSON.parse(textarea.value);
-          appData = newData;
-          renderAll();
-          close();
-          alert('已保存到当前页面。要更新线上版本，请下载 JSON 并替换 GitHub 上的文件。');
-        } catch (e) {
-          alert('JSON 格式错误：' + e.message);
-        }
-      });
-    }
+      return '<article class="flight-card">' +
+        '<div class="fc-top">' +
+          '<span class="fc-index">FLIGHT ' + pad2(idx + 1) + '/' + pad2(total) + '</span>' +
+          '<span class="fc-airline">' + esc(airlineText) + '</span>' +
+        '</div>' +
+        '<div class="fc-title">' + esc(titleText) + '</div>' +
+        codesHtml +
+        legsHtml +
+        '<div class="fc-meta">' + meta.map(function (m) { return '<span>' + esc(m) + '</span>'; }).join('') + '</div>' +
+        '<div class="fc-count">' +
+          '<span class="k">距离起飞还剩</span>' +
+          '<b data-target="' + new Date(startIso).getTime() + '" data-end="' + new Date(endIso).getTime() +
+            '" data-live="flight">--</b>' +
+        '</div>' +
+      '</article>';
+    }).join('');
 
-    // ===== 模态框 =====
-    function initModal() {
-      document.getElementById('modal-close').addEventListener('click', () => {
-        document.getElementById('modal-overlay').classList.remove('open');
-      });
-      document.getElementById('modal-overlay').addEventListener('click', (e) => {
-        if (e.target.id === 'modal-overlay') document.getElementById('modal-overlay').classList.remove('open');
-      });
-    }
+    dots.innerHTML = flights.map(function (_, i) {
+      return '<span class="' + (i === 0 ? 'on' : '') + '"></span>';
+    }).join('');
+    updateRailPage(0, total);
+  }
 
-    // ===== 渲染全部 =====
-    function renderAll() {
-      renderNow();
-      renderTodayRoute();
-      renderDaily();
-      renderHotspots();
-      renderReservations();
-      renderFlights();
-      renderChecklist();
-    }
+  // 航班横向滑动：指示点与页码（只绑定一次，避免重复累积）
+  function initRail() {
+    var rail = document.getElementById('flight-rail');
+    var dots = document.getElementById('flight-dots');
+    rail.addEventListener('scroll', function () {
+      var total = +rail.dataset.total || 0;
+      var card = rail.querySelector('.flight-card');
+      if (!card || !total) return;
+      var step = card.offsetWidth + 12;
+      var i = Math.min(total - 1, Math.max(0, Math.round(rail.scrollLeft / step)));
+      dots.querySelectorAll('span').forEach(function (d, k) { d.classList.toggle('on', k === i); });
+      updateRailPage(i, total);
+    }, { passive: true });
+  }
 
-    // ===== 初始化 =====
-    document.addEventListener('DOMContentLoaded', () => {
-      loadData().then(() => {
-        initEditor();
-        initModal();
-        document.getElementById('now-refresh').addEventListener('click', renderNow);
-        // 每分钟刷新
-        setInterval(renderNow, 60000);
-        // 尝试获取 GPS 位置
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(pos => {
-            appData.currentLocation = {
-              name: '当前位置',
-              lat: pos.coords.latitude,
-              lng: pos.coords.longitude
-            };
-            renderNow();
-            renderTodayRoute();
-          }, () => {});
+  // ===== 准备清单（localStorage 为准，JSON 首次种子）=====
+  function seedChecklist() {
+    return (appData.checklist || []).map(function (c) {
+      return {
+        category: c.category,
+        items: (c.items || []).map(function (i) {
+          return { id: i.id, text: i.text, done: !!i.done };
+        })
+      };
+    });
+  }
+
+  // v1 → v2 迁移：按新种子重建清单，尽量保留已勾选状态和手动添加的条目
+  function migrateChecklistV1(old, seeded, legacy) {
+    var doneByText = {}, doneById = {}, customs = [];
+
+    old.forEach(function (c) {
+      (c.items || []).forEach(function (i) {
+        if (i.done) { doneByText[i.text] = true; doneById[i.id] = true; }
+        if (String(i.id).indexOf('custom-') === 0) {
+          customs.push({ category: c.category, item: { id: i.id, text: i.text, done: !!i.done } });
         }
       });
     });
-  </script>
+
+    seeded.forEach(function (c) {
+      c.items.forEach(function (i) {
+        if (legacy[i.id] || doneById[i.id] || doneByText[i.text]) i.done = true;
+      });
+    });
+
+    // 手动添加的条目照旧留着；原分类若已被删掉，就归入「自定义」
+    customs.forEach(function (x) {
+      var target = seeded.filter(function (c) { return c.category === x.category; })[0];
+      if (!target) {
+        target = seeded.filter(function (c) { return c.category === '自定义'; })[0];
+        if (!target) { target = { category: '自定义', items: [] }; seeded.push(target); }
+      }
+      var dup = target.items.some(function (i) {
+        return i.id === x.item.id || i.text === x.item.text;
+      });
+      if (!dup) target.items.push(x.item);
+    });
+
+    return seeded;
+  }
+
+  function loadChecklist() {
+    try {
+      var raw = localStorage.getItem(CHECKLIST_KEY);
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length) return parsed;
+      }
+    } catch (e) { /* 数据损坏则重新种子 */ }
+
+    var seeded = seedChecklist();
+    var legacy = {};
+    try { legacy = (JSON.parse(localStorage.getItem(LEGACY_KEY)) || {}).checklist || {}; } catch (e) { /* 无旧数据 */ }
+
+    var old = null;
+    try {
+      var rawV1 = JSON.parse(localStorage.getItem(CHECKLIST_KEY_V1) || 'null');
+      if (Array.isArray(rawV1) && rawV1.length) old = rawV1;
+    } catch (e) { old = null; }
+
+    if (old) {
+      migrateChecklistV1(old, seeded, legacy);
+      try { localStorage.removeItem(CHECKLIST_KEY_V1); } catch (e) { /* 忽略 */ }
+      return seeded;
+    }
+
+    seeded.forEach(function (c) {
+      c.items.forEach(function (i) { if (legacy[i.id]) i.done = true; });
+    });
+    return seeded;
+  }
+
+  function saveChecklist() {
+    try { localStorage.setItem(CHECKLIST_KEY, JSON.stringify(checklistData)); } catch (e) { /* 存储不可用 */ }
+  }
+
+  function checklistStats() {
+    var total = 0, done = 0;
+    checklistData.forEach(function (c) {
+      (c.items || []).forEach(function (i) { total++; if (i.done) done++; });
+    });
+    return { total: total, done: done };
+  }
+
+  function paintProgress() {
+    var s = checklistStats();
+    document.getElementById('cl-progress').innerHTML = '已完成 <b>' + s.done + '</b> / ' + s.total;
+    document.getElementById('cl-bar-fill').style.width = s.total ? (s.done / s.total * 100) + '%' : '0%';
+  }
+
+  function syncCategoryOptions() {
+    var sel = document.getElementById('cl-cat');
+    var current = sel.value;
+    var names = checklistData.map(function (c) { return c.category; });
+    if (names.indexOf('自定义') < 0) names.push('自定义');
+    sel.innerHTML = names.map(function (n) {
+      return '<option value="' + esc(n) + '">' + esc(n) + '</option>';
+    }).join('');
+    if (names.indexOf(current) >= 0) sel.value = current;
+  }
+
+  function renderChecklist() {
+    var list = document.getElementById('checklist-list');
+    paintProgress();
+
+    list.innerHTML = checklistData.map(function (c, ci) {
+      if (!c.items || !c.items.length) return '';
+      return '<div class="checklist-category">' +
+        '<h4 class="checklist-title">' + esc(c.category) + '</h4>' +
+        c.items.map(function (item, ii) {
+          return '<label class="checklist-item' + (item.done ? ' done' : '') + '">' +
+            '<input type="checkbox" data-ci="' + ci + '" data-ii="' + ii + '"' + (item.done ? ' checked' : '') + '>' +
+            '<span>' + esc(item.text) + '</span>' +
+            '<button type="button" class="cl-del" data-del="' + ci + ':' + ii + '" title="删除">✕</button>' +
+          '</label>';
+        }).join('') +
+      '</div>';
+    }).join('');
+
+    list.querySelectorAll('input[type=checkbox]').forEach(function (cb) {
+      cb.addEventListener('change', function () {
+        checklistData[+cb.dataset.ci].items[+cb.dataset.ii].done = cb.checked;
+        cb.closest('.checklist-item').classList.toggle('done', cb.checked);
+        saveChecklist();
+        paintProgress();
+      });
+    });
+
+    list.querySelectorAll('[data-del]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var p = btn.dataset.del.split(':');
+        checklistData[+p[0]].items.splice(+p[1], 1);
+        saveChecklist();
+        renderChecklist();
+        syncCategoryOptions();
+      });
+    });
+  }
+
+  function initChecklist() {
+    syncCategoryOptions();
+
+    function addItem() {
+      var input = document.getElementById('cl-input');
+      var text = input.value.trim();
+      if (!text) { input.focus(); return; }
+      var cat = document.getElementById('cl-cat').value;
+      var target = checklistData.find(function (c) { return c.category === cat; });
+      if (!target) { target = { category: cat, items: [] }; checklistData.push(target); }
+      target.items.push({ id: 'custom-' + Date.now(), text: text, done: false });
+      input.value = '';
+      saveChecklist();
+      renderChecklist();
+      syncCategoryOptions();
+      input.focus();
+    }
+
+    document.getElementById('cl-add-btn').addEventListener('click', addItem);
+    document.getElementById('cl-input').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); addItem(); }
+    });
+
+    document.getElementById('cl-reset').addEventListener('click', function () {
+      if (!confirm('确定恢复默认清单吗？网页上添加和删除的事项都会丢失。')) return;
+      checklistData = seedChecklist();
+      saveChecklist();
+      renderChecklist();
+      syncCategoryOptions();
+    });
+  }
+
+  // ===== 底部弹窗 =====
+  function openSheet(title, rows, navUrl) {
+    document.getElementById('sheet-title').textContent = title;
+    document.getElementById('sheet-body').innerHTML = rows.map(function (r) {
+      if (!r.value) return '';
+      return '<div class="sheet-row">' +
+        '<div class="sheet-label">' + esc(r.label) + '</div>' +
+        '<div class="sheet-value">' + (r.raw ? r.value : esc(r.value)) + '</div>' +
+      '</div>';
+    }).join('');
+
+    var nav = document.getElementById('sheet-nav');
+    if (navUrl && navUrl !== '#') {
+      nav.href = navUrl;
+      nav.classList.remove('hidden');
+    } else {
+      nav.href = '#';
+      nav.classList.add('hidden');
+    }
+
+    document.getElementById('sheet-mask').classList.add('on');
+    document.getElementById('sheet').classList.add('on');
+  }
+
+  function closeSheet() {
+    document.getElementById('sheet-mask').classList.remove('on');
+    document.getElementById('sheet').classList.remove('on');
+  }
+
+  function openActivitySheet(day, a) {
+    var hasGeo = a.lat != null && a.lng != null;
+    openSheet(a.title, [
+      { label: '时间', value: day.date + ' ' + (day.weekday || '') + ' ' + (a.time || '全天') },
+      { label: '地点', value: a.location },
+      { label: '详细地址', value: a.address || '待补充' },
+      { label: '交通', value: a.leg || '' },
+      { label: '备注', value: a.note || '无' }
+    ], hasGeo ? navHref(a.lat, a.lng, a.location) : '#');
+  }
+
+  function openPointSheet(p) {
+    var hasGeo = p.lat != null && p.lng != null;
+    var timeText = (p.date ? p.date + ' ' : '') + (p.weekday ? p.weekday + ' ' : '') + p.timeLabel;
+    openSheet(p.title, [
+      { label: '时间', value: timeText },
+      { label: '地点', value: p.location },
+      { label: '详细地址', value: p.address || '待补充' },
+      { label: '备注', value: p.note || '无' }
+    ], hasGeo ? navHref(p.lat, p.lng, p.location) : '#');
+  }
+
+  function openHotspotSheet(id) {
+    var h = (appData.hotspots || []).find(function (x) { return x.id === id; });
+    if (!h) return;
+    var hasGeo = h.lat != null && h.lng != null;
+    openSheet(h.name, [
+      { label: '一句话', value: h.description },
+      { label: '地址', value: h.address || '待补充' },
+      { label: '最佳时间', value: h.bestTime || '待补充' },
+      {
+        label: '来源',
+        raw: true,
+        value: esc(h.source) + (h.sourceUrl
+          ? ' · <a href="' + esc(h.sourceUrl) + '" target="_blank" rel="noopener">查看原文</a>' : '')
+      },
+      { label: '行程状态', value: h.addedToPlan ? '已加入行程' : '可选' }
+    ], hasGeo ? navHref(h.lat, h.lng, h.name) : '#');
+  }
+
+  function initSheet() {
+    document.getElementById('sheet-close').addEventListener('click', closeSheet);
+    document.getElementById('sheet-cancel').addEventListener('click', closeSheet);
+    document.getElementById('sheet-mask').addEventListener('click', closeSheet);
+  }
+
+  // ===== JSON 编辑器 =====
+  function initEditor() {
+    var mask = document.getElementById('editor-mask');
+    var panel = document.getElementById('editor-panel');
+    var textarea = document.getElementById('editor-textarea');
+
+    document.getElementById('editor-trigger').addEventListener('click', function () {
+      textarea.value = JSON.stringify(appData, null, 2);
+      mask.classList.add('on');
+      panel.classList.add('on');
+    });
+
+    function close() { mask.classList.remove('on'); panel.classList.remove('on'); }
+    document.getElementById('editor-close').addEventListener('click', close);
+    mask.addEventListener('click', close);
+
+    document.getElementById('editor-download').addEventListener('click', function () {
+      var blob = new Blob([textarea.value], { type: 'application/json' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'travel-data.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    document.getElementById('editor-save').addEventListener('click', function () {
+      try {
+        appData = JSON.parse(textarea.value);
+        points = buildPoints();
+        renderAll();
+        close();
+        alert('已保存到当前页面。要更新线上版本，请点「下载 JSON」并替换仓库里的 travel-data.json。');
+      } catch (e) {
+        alert('JSON 格式错误：' + e.message);
+      }
+    });
+  }
+
+  // ===== 渲染全部 =====
+  function renderAll() {
+    renderNext();
+    renderDays();
+    renderDayDetail();
+    renderHotspots();
+    renderReservations();
+    renderFlights();
+    renderChecklist();
+    tickCountdowns();
+  }
+
+  // ===== 启动 =====
+  document.addEventListener('DOMContentLoaded', function () {
+    loadData().then(function () {
+      checklistData = loadChecklist();
+      loadDoneActs();
+      points = buildPoints();
+
+      // 渲染出错不要连累后面的模块，也不要误报成「数据加载失败」
+      try {
+        renderAll();
+      } catch (renderErr) {
+        document.getElementById('load-error').innerHTML =
+          '<div class="banner"><b>页面渲染出错</b><br>' + esc(renderErr && renderErr.message ? renderErr.message : renderErr) +
+          '<br>数据已正常读取，可以先刷新重试。</div>';
+      }
+
+      initChecklist();
+      initSheet();
+      initEditor();
+      initRail();
+
+      document.getElementById('nx-refresh').addEventListener('click', function () {
+        points = buildPoints();
+        renderNext();
+        renderDayDetail();
+      });
+
+      setInterval(tickCountdowns, 1000);
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (pos) {
+          appData.currentLocation = {
+            name: '当前位置',
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude
+          };
+          renderNext();
+          renderDayDetail();
+        }, function () { /* 拒绝授权就沿用 JSON 里的 currentLocation */ });
+      }
+    }).catch(function (err) {
+      document.getElementById('load-error').innerHTML =
+        '<div class="banner"><b>数据加载失败</b><br>' + esc(err.message) +
+        '<br>如果是用 file:// 直接打开本文件，浏览器会拦截读取 travel-data.json。' +
+        '请在项目目录运行 <code>python -m http.server 8080</code>，再访问 http://localhost:8080 预览。</div>';
+    });
+  });
+</script>
 </body>
 </html>
