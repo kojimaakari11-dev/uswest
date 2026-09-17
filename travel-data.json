@@ -1,5 +1,13 @@
 {
   "_comment": "旅行计划数据文件，修改后刷新网页即可生效。不要删除引号和逗号。",
+  "_fields": {
+    "daily[].activities[].tz": "可选。该时间的时区（IANA 名称，如 Asia/Shanghai）。不填则默认按 meta.tripTimezone 解析。跨时区航班当天务必填写。",
+    "daily[].activities[].time": "支持 \"HH:MM\" 精确时间，也支持 \"上午 / 下午 / 晚上\" 这类时段——时段只显示文字本身，不会推算并显示具体钟点。「入住」这类常规动作不必写进行程，只写「退房」。",
+    "daily[].activities[].leg": "可选。「从这个行程点去下一个点」的交通方式和耗时，纯展示文本，如 \"✈️ 飞行 1h50m\"。不填则按两地坐标自动估算驾车/步行时间。",
+    "daily[].activities[].address": "可选。详细地址，用于「下一站」卡片。不填则回退显示 location。",
+    "flights[].title": "可选。航班卡片的标题，如 \"上海 → 首尔 → 旧金山\"。",
+    "hotspots[].sourceUrl": "可选。小红书等来源链接。"
+  },
   "meta": {
     "title": "美国西岸之旅",
     "destination": "旧金山湾区 · 洛杉矶 · 波特兰",
@@ -17,6 +25,7 @@
   "flights": [
     {
       "id": "f1",
+      "title": "上海 → 首尔 → 旧金山",
       "type": "international",
       "direction": "outbound",
       "date": "2026-09-24",
@@ -47,6 +56,7 @@
     },
     {
       "id": "f2",
+      "title": "旧金山 ↔ 伯班克",
       "type": "domestic",
       "direction": "roundtrip",
       "date": "2026-09-25",
@@ -72,6 +82,7 @@
     },
     {
       "id": "f3",
+      "title": "圣何塞 ↔ 波特兰",
       "type": "domestic",
       "direction": "roundtrip",
       "date": "2026-10-01",
@@ -97,6 +108,7 @@
     },
     {
       "id": "f4",
+      "title": "旧金山 → 首尔 → 上海",
       "type": "international",
       "direction": "return",
       "date": "2026-10-05",
@@ -243,10 +255,10 @@
       "city": "上海 → 旧金山",
       "accommodation": "小张家",
       "activities": [
-        { "time": "13:10", "title": "浦东机场起飞", "location": "PVG T2", "type": "flight", "note": "韩亚 OZ364", "lat": 31.1443, "lng": 121.8083 },
-        { "time": "16:00", "title": "抵达首尔仁川", "location": "ICN T2", "type": "flight", "note": "中转 5 小时", "lat": 37.4691, "lng": 126.4505 },
-        { "time": "21:00", "title": "仁川机场起飞", "location": "ICN T2", "type": "flight", "note": "韩亚 OZ212", "lat": 37.4691, "lng": 126.4505 },
-        { "time": "15:30", "title": "抵达旧金山", "location": "SFO", "type": "flight", "note": "当地时间 9.24 15:30 抵达", "lat": 37.6213, "lng": -122.379 }
+        { "time": "13:10", "title": "浦东机场起飞", "location": "PVG T2", "type": "flight", "tz": "Asia/Shanghai", "note": "韩亚 OZ364", "leg": "✈️ 飞行 1h50m", "lat": 31.1443, "lng": 121.8083 },
+        { "time": "16:00", "title": "抵达首尔仁川", "location": "ICN T2", "type": "flight", "tz": "Asia/Seoul", "note": "中转 5 小时", "leg": "🔁 中转停留 5h", "lat": 37.4691, "lng": 126.4505 },
+        { "time": "21:00", "title": "仁川机场起飞", "location": "ICN T2", "type": "flight", "tz": "Asia/Seoul", "note": "韩亚 OZ212", "leg": "✈️ 飞行 10h30m", "lat": 37.4691, "lng": 126.4505 },
+        { "time": "15:30", "title": "抵达旧金山", "location": "SFO", "type": "flight", "tz": "America/Los_Angeles", "address": "San Francisco International Airport, CA 94128", "note": "当地时间 9.24 15:30 抵达", "lat": 37.6213, "lng": -122.379 }
       ]
     },
     {
@@ -255,8 +267,8 @@
       "city": "旧金山 → 洛杉矶",
       "accommodation": "洛杉矶酒店（待补充）",
       "activities": [
-        { "time": "10:35", "title": "SFO 起飞", "location": "SFO", "type": "flight", "note": "Southwest WN3714 飞伯班克", "lat": 37.6213, "lng": -122.379 },
-        { "time": "11:50", "title": "抵达伯班克", "location": "BUR", "type": "flight", "note": "Burbank Airport", "lat": 34.2007, "lng": -118.3585 },
+        { "time": "10:35", "title": "SFO 起飞", "location": "SFO", "type": "flight", "note": "Southwest WN3714 飞伯班克", "leg": "✈️ 飞行 1h15m", "lat": 37.6213, "lng": -122.379 },
+        { "time": "11:50", "title": "抵达伯班克", "location": "BUR", "type": "flight", "address": "Hollywood Burbank Airport, 2627 N Hollywood Way, Burbank, CA 91505", "note": "Burbank Airport", "lat": 34.2007, "lng": -118.3585 },
         { "time": "午后", "title": "Erewhon", "location": "洛杉矶", "type": "food", "note": "小张推荐", "lat": 34.0901, "lng": -118.385 },
         { "time": "下午", "title": "Malibu / Laguna Beach", "location": "洛杉矶周边", "type": "sight", "note": "海边打卡", "lat": 33.5436, "lng": -117.7834 },
         { "time": "晚上", "title": "Dinner", "location": "洛杉矶", "type": "food", "note": "晚餐", "lat": 34.0522, "lng": -118.2437 }
@@ -283,7 +295,7 @@
         { "time": "上午", "title": "Maru Coffee", "location": "洛杉矶", "type": "cafe", "note": "小张推荐", "lat": 34.0901, "lng": -118.385 },
         { "time": "中午", "title": "LAX In-N-Out", "location": "洛杉矶", "type": "food", "note": "小张推荐", "lat": 33.9416, "lng": -118.4085 },
         { "time": "17:30", "title": "Lash", "location": "洛杉矶", "type": "service", "note": "预约 17:30", "lat": 34.0522, "lng": -118.2437 },
-        { "time": "20:45", "title": "伯班克起飞", "location": "BUR", "type": "flight", "note": "Southwest WN2922", "lat": 34.2007, "lng": -118.3585 },
+        { "time": "20:45", "title": "伯班克起飞", "location": "BUR", "type": "flight", "note": "Southwest WN2922", "leg": "✈️ 飞行 1h20m", "lat": 34.2007, "lng": -118.3585 },
         { "time": "22:05", "title": "抵达 SFO", "location": "SFO", "type": "flight", "note": "返回湾区，入住 Palo Alto 酒店", "lat": 37.6213, "lng": -122.379 }
       ]
     },
@@ -311,7 +323,7 @@
       "city": "Palo Alto → 旧金山",
       "accommodation": "小孙家",
       "activities": [
-        { "time": "11:00", "title": "酒店退房", "location": "Graduate by Hilton Palo Alto", "type": "hotel", "note": "退房时间 11:00", "lat": 37.4439, "lng": -122.1615 },
+        { "time": "11:00", "title": "酒店退房", "location": "Graduate by Hilton Palo Alto", "type": "hotel", "address": "488 Main St, Palo Alto, CA 94301", "note": "退房时间 11:00", "lat": 37.4439, "lng": -122.1615 },
         { "time": "白天", "title": "斯坦福大学", "location": "Stanford, CA", "type": "sight", "note": "Meyer Green 等校园景点", "lat": 37.4275, "lng": -122.1697 },
         { "time": "白天", "title": "El Palo Alto Tree", "location": "Palo Alto, CA", "type": "sight", "note": "Palo Alto 城市命名的古老巨杉", "lat": 37.4197, "lng": -122.132 },
         { "time": "19:30", "title": "Selby's 晚餐", "location": "Redwood City, CA", "type": "food", "note": "已预约，与 小张、小孙", "lat": 37.4849, "lng": -122.2281 },
@@ -324,8 +336,8 @@
       "city": "湾区 → 波特兰",
       "accommodation": "波特兰酒店（待补充）",
       "activities": [
-        { "time": "15:30", "title": "SJC 起飞", "location": "San Jose SJC", "type": "flight", "note": "航班 3330 飞波特兰", "lat": 37.3639, "lng": -121.9289 },
-        { "time": "17:20", "title": "抵达波特兰", "location": "PDX", "type": "flight", "note": "", "lat": 45.5898, "lng": -122.5951 }
+        { "time": "15:30", "title": "SJC 起飞", "location": "San Jose SJC", "type": "flight", "note": "航班 3330 飞波特兰", "leg": "✈️ 飞行 1h50m", "lat": 37.3639, "lng": -121.9289 },
+        { "time": "17:20", "title": "抵达波特兰", "location": "PDX", "type": "flight", "address": "Portland International Airport, 7000 NE Airport Way, Portland, OR 97218", "note": "", "lat": 45.5898, "lng": -122.5951 }
       ]
     },
     {
@@ -344,9 +356,8 @@
       "accommodation": "萨克拉门托酒店",
       "activities": [
         { "time": "白天", "title": "波特兰活动", "location": "波特兰", "type": "other", "note": "待安排", "lat": 45.5152, "lng": -122.6784 },
-        { "time": "17:50", "title": "PDX 起飞", "location": "PDX", "type": "flight", "note": "航班 3330 回 SJC", "lat": 45.5898, "lng": -122.5951 },
-        { "time": "19:40", "title": "抵达 SJC", "location": "San Jose SJC", "type": "flight", "note": "", "lat": 37.3639, "lng": -121.9289 },
-        { "time": "晚上", "title": "入住萨克拉门托酒店", "location": "萨克拉门托", "type": "hotel", "note": "Capitol Park / 天际线景观", "lat": 38.5816, "lng": -121.4944 }
+        { "time": "17:50", "title": "PDX 起飞", "location": "PDX", "type": "flight", "note": "航班 3330 回 SJC", "leg": "✈️ 飞行 1h50m", "lat": 45.5898, "lng": -122.5951 },
+        { "time": "19:40", "title": "抵达 SJC", "location": "San Jose SJC", "type": "flight", "note": "", "lat": 37.3639, "lng": -121.9289 }
       ]
     },
     {
@@ -384,9 +395,9 @@
       "city": "首尔 → 上海",
       "accommodation": "到家",
       "activities": [
-        { "time": "04:25", "title": "抵达首尔仁川", "location": "ICN T2", "type": "flight", "note": "中转 4h35m", "lat": 37.4691, "lng": 126.4505 },
-        { "time": "09:00", "title": "仁川起飞", "location": "ICN T2", "type": "flight", "note": "韩亚 OZ361", "lat": 37.4691, "lng": 126.4505 },
-        { "time": "10:05", "title": "抵达上海浦东", "location": "PVG T2", "type": "flight", "note": "旅程结束", "lat": 31.1443, "lng": 121.8083 }
+        { "time": "04:25", "title": "抵达首尔仁川", "location": "ICN T2", "type": "flight", "tz": "Asia/Seoul", "note": "中转 4h35m", "leg": "🔁 中转停留 4h35m", "lat": 37.4691, "lng": 126.4505 },
+        { "time": "09:00", "title": "仁川起飞", "location": "ICN T2", "type": "flight", "tz": "Asia/Seoul", "note": "韩亚 OZ361", "leg": "✈️ 飞行 2h5m", "lat": 37.4691, "lng": 126.4505 },
+        { "time": "10:05", "title": "抵达上海浦东", "location": "PVG T2", "type": "flight", "tz": "Asia/Shanghai", "address": "上海浦东国际机场", "note": "旅程结束", "lat": 31.1443, "lng": 121.8083 }
       ]
     }
   ],
@@ -503,16 +514,7 @@
         { "id": "c1", "text": "护照", "done": false },
         { "id": "c2", "text": "美国签证 / ESTA", "done": false },
         { "id": "c3", "text": "EVUS 登记（B1/B2 签证）", "done": false },
-        { "id": "c4", "text": "身份证", "done": false },
-        { "id": "c5", "text": "驾照及翻译件（如需租车）", "done": false }
-      ]
-    },
-    {
-      "category": "预订备份",
-      "items": [
-        { "id": "c6", "text": "机票行程单截图", "done": false },
-        { "id": "c7", "text": "酒店确认单截图", "done": false },
-        { "id": "c8", "text": "餐厅 / 活动预约截图", "done": false }
+        { "id": "c4", "text": "身份证", "done": false }
       ]
     },
     {
@@ -575,12 +577,13 @@
     {
       "category": "礼物",
       "items": [
-        { "id": "c41", "text": "墨水", "done": false },
+        { "id": "c41", "text": "小孙：墨水", "done": false },
         { "id": "c42", "text": "挂件", "done": false },
         { "id": "c43", "text": "2人玩偶", "done": false },
         { "id": "c44", "text": "茶包", "done": false },
         { "id": "c45", "text": "咖啡", "done": false },
-        { "id": "c46", "text": "杯垫", "done": false }
+        { "id": "c46", "text": "杯垫", "done": false },
+        { "id": "c51", "text": "小张：2衣服、美瞳、夹子、假睫毛", "done": false }
       ]
     },
     {
